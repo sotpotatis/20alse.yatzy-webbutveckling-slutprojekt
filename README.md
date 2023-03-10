@@ -1,4 +1,4 @@
-# webb-slutprojekt
+# webbutveckling-slutprojekt
 
 Detta är git-repositoryt för mitt slutprojekt inom kursen Webbutveckling 1. Det är ett projekt tillsammans med Gränsnittsdesign.
 
