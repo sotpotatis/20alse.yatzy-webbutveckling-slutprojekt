@@ -1,0 +1,7 @@
+/* Läs in typsnitt */
+@import url('https://fonts.cdnfonts.com/css/open-dyslexic');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+/* Initiera Tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
