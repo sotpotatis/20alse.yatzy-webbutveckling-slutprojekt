@@ -20,7 +20,7 @@ export default function Button(props) {
         additionalClasses += " flex flex-row items-center gap-2"
     }
     
-    return <button onClick={onClick} className={`${colorClassesToApply} ${additionalClasses} font-bold border-2 rounded-sm px-3 py-1 hover:cursor-pointer`}>
+    return <button onClick={onClick} className={`${colorClassesToApply} ${additionalClasses} font-bold border-2 rounded-sm px-3 py-3 hover:cursor-pointer`}>
         {icon}        
         {text}
     </button>

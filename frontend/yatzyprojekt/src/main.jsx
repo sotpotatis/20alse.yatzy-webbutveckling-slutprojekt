@@ -19,6 +19,9 @@ const router = createBrowserRouter([{ // Startsida på hemsidan
     path: "/yatzy",
     element: <Index/>
   },
+  {
+    path: "/yatzy/create-game"
+  },
   { // Undersida för att ansluta till ett spel med flerspelarläge
   path: "/yatzy/join-game",
     element: <GameLobby/>
