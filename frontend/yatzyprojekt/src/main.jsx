@@ -11,16 +11,20 @@ import Game from './routes/Game'
 import ErrorPage from './routes/ErrorPage'
 // Här defineras de olika undersidorna på hemsidan
 const router = createBrowserRouter([{ // Startsida på hemsidan
-  path: "/",
+  path: "/yatzy",
   element: <Root />,
   errorElement: <ErrorPage/>,
   children: [
+    {
+    path: "/yatzy",
+    element: <Index/>
+  },
   { // Undersida för att ansluta till ett spel med flerspelarläge
-  path: "/join-game",
+  path: "/yatzy/join-game",
     element: <GameLobby/>
   },
 { // Undersida för själva spelet
-  path: "/game/:id",
+  path: "/yatzy/game/:id",
   element: <Game/>  
 }
   ]
