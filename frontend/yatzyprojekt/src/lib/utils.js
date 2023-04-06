@@ -10,3 +10,11 @@ Blandade hjälpfunktioner för sidan. */
 export function setDefaults(value, defaultValue) {
     return value !== undefined ? value : defaultValue
 }
+/**
+ * 
+ * @param {*} url Länken som ska öppnas.
+ * @param {*} newWindow Om länken ska öppnas i en ny flik eller inte.
+ */
+export function openURL(url, newWindow=false) {
+    window.open(url, newWindow ? "_blank": null)
+}

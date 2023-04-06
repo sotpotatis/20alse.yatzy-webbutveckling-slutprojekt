@@ -9,19 +9,26 @@ const colors = { // Definera färgerna på ram och bakgrund för olika knappar
     lightGreen: "border-green-400 bg-emerald-400 text-white",
     link: "text-gray-400 hover:underline border-none"
 }
-export default function Button(props) {
-    const text = props.text
-    const onClick = props.onClick
-    const colorClassesToApply = colors[props.color]
-    let additionalClasses = props.additionalClasses !== undefined ? props.additionalClasses : "" // Valfria externa klasser
-    let icon = null
-    if (props.icon !== undefined) {
-        icon = <Icon icon={props.icon} /> // Valfri ikon
-        additionalClasses += " flex flex-row items-center gap-2"
+export default function Button({ text, onClick, color, additionalClasses, icon, type, disabled, title }) {
+    const colorClassesToApply = colors[color]
+    let otherClassesToApply = ""
+    if (icon !== null) {
+        icon = <Icon icon={icon} /> // Valfri ikon
+        otherClassesToApply += "flex flex-row items-center gap-2"
     }
-    
-    return <button onClick={onClick} className={`${colorClassesToApply} ${additionalClasses} font-bold border-2 rounded-sm px-3 py-3 hover:cursor-pointer`}>
+    if (disabled) {
+        otherClassesToApply += "hover:cursor-not-allowed"
+    }
+    return <button type={type} disabled={disabled} title={title}  onClick={onClick} className={`${colorClassesToApply} ${additionalClasses} ${otherClassesToApply} font-bold border-2 rounded-sm px-3 py-3 hover:cursor-pointer disabled:opacity-50`}>
         {icon}        
         {text}
     </button>
+}
+Button.defaultProps = {
+    color: "blue",
+    type: "button",
+    icon: null,
+    additionalClasses: "",
+    disabled: false,
+    title: null
 }

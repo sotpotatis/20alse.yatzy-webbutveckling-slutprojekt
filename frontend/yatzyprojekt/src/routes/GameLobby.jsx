@@ -12,7 +12,14 @@ export default function GameLobby() {
     // Rendera olika saker beroende på om användaren väntar på ett spel eller inte
     let elementToRender = null
     if (!inLobby) {
-        elementToRender = <GameCodeInput gameCode={gameCode} setGameCode={ setGameCode} />
+        elementToRender = <div className="flex items-center justify-center"><GameCodeInput
+            gameCode={gameCode}
+            onGameCode={
+                (gameCode) => {
+                console.log(`Spelkod inställd.`)
+            }
+        }
+        /></div>
     }
     else {
         elementToRender = <p>En lobby ska renderas här.</p>
