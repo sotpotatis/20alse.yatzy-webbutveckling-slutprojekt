@@ -8,8 +8,7 @@ import {createContext} from "react";
 const socketURL = process.env.NODE_ENV === "production" ? "": "http://localhost:3000"
 export const socket = io(
     socketURL, {
-        // TODO kolla upp hur vi ska hantera autoConnect. Ska varje komponent koppla upp eller finns det ett snyggare sätt?
-        autoConnect: false
+        autoConnect: true
     }
 )
 export const SocketContext = createContext()

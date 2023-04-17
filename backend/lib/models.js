@@ -12,7 +12,7 @@ export default function defineModels(sequelize) {
     // Ett Game refererar till ett helt spel som involverar flera spelomgångar.
     const Game = sequelize.define(
         "Game", {
-            gameId: UUID,
+            gameCode: UUID,
             completed: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: false
@@ -107,7 +107,7 @@ export default function defineModels(sequelize) {
     })
     // Definiera relationer mellan modellerna.
     Game.hasMany(Round, {as: "rounds"}) // Ett spel har flera rundor
-    Round.belongsTo(Game, {"foreignKey": "isInGameId", as: "round"})
+    Round.belongsTo(Game, {"foreignKey": "isIngameCode", as: "round"})
     Game.hasMany(Player, {as: "players"}) // ...och flera spelare!
     Player.belongsTo(Game, { foreignKey: "playerRound", as: "player" })
     Round.hasMany(Turn, {as: "turns"}) // Varje runda har flera turer

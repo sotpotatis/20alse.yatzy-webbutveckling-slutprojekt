@@ -5,7 +5,9 @@ import defineModels from "./lib/models.js";
 import socketHandler from "./lib/socket.js";
 import Sequelize from "sequelize";
 import * as dotenv from "dotenv";
-import {Server} from "socket.io";
+import { Server } from "socket.io";
+import { createServer } from "http";
+import cors from "cors";
 // Ladda hemligheter från en eventuell .env-fil.
 dotenv.config()
 const DATABASE_SERVER = process.env.DATABASE_SERVER;
@@ -45,18 +47,22 @@ sequelize.sync().then(() => {
     console.log("Databasensynkronisering klar.")
     // Starta nu servern som klienter kan koppla upp mot.
     // Servern använder teknologin WebSockets och biblioteket Socket.io
-    const socketServer = new Server({
+    const httpServer = createServer()
+    const socketServer = new Server(httpServer, {
         cors: { // Specificera CORS-regler, annars kommer inte klienter i webbläsare vela koppla upp sig.
             origin: "*",
             methods: ["GET", "POST"]
         }
     })
-    socketServer.on("connection", (stream) => {
-        console.log("En ny klient kopplade upp till servern!")
-    }),
-    socketHandler(socketServer, sequelize.models)
+    socketServer.on("connection", (socket) => {
+        console.log("En användare anslöt upp till servern!")
+        socketHandler(socket, sequelize.models) // Registrera meddelandehanterare
+    })
+    socketServer.on("disconnect", (socket) => {
+        console.log("En användare kopplade bort från servern.")
+    })
     console.log(`Lyssnar på port ${SOCKET_SERVER_PORT}...`)
-    socketServer.listen(SOCKET_SERVER_PORT)
+    httpServer.listen(SOCKET_SERVER_PORT)
 }).catch((error) => { // Ifall fel inträffar under synkroniseringen eller under applikationen
     console.log("Ett fel inträffade när appen kördes: ", error)
 })
