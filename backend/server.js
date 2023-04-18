@@ -43,7 +43,7 @@ sequelize.authenticate().then(()=>{
 }).catch((error) => { // Ifall ett fel uppstår vid uppkoppling till databasen
     console.log("Ett fel inträffade vid uppkoppling till databasen: ", error)
 })
-sequelize.sync().then(() => {
+sequelize.sync({force: true}).then(() => {
     console.log("Databasensynkronisering klar.")
     // Starta nu servern som klienter kan koppla upp mot.
     // Servern använder teknologin WebSockets och biblioteket Socket.io

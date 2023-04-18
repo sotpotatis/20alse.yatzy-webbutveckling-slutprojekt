@@ -7,6 +7,7 @@ const colors = { // Definera färgerna på ram och bakgrund för olika knappar
     lightBlue: "border-blue-300 bg-sky-400 text-white",
     green: "border-green-400 bg-green-500 text-white",
     lightGreen: "border-green-400 bg-emerald-400 text-white",
+    lightGray: "border-gray-400 bg-slate-400 text-white",
     link: "text-gray-400 hover:underline border-none"
 }
 export default function Button({ text, onClick, color, additionalClasses, icon, type, disabled, title }) {

@@ -3,16 +3,17 @@ För att hantera multiplayer så sparas data för att hålla koll på spelet.
 Jag använder biblioteket Sequelize för att få en flexibel lösning för att kunna hämta in data
 */
 import { Sequelize, DataTypes, Model } from "sequelize";
-const UUID = { // Definiera en genväg till ett UUID som datafält.
-    type: DataTypes.UUID,
-    defaultValue: Sequelize.UUIDV4,
-}
 export default function defineModels(sequelize) {
     /* Initierar alla modeller. */
     // Ett Game refererar till ett helt spel som involverar flera spelomgångar.
     const Game = sequelize.define(
         "Game", {
-            gameCode: UUID,
+            gameCode: {
+                type: DataTypes.INTEGER,
+                autoIncrement: true,
+                primaryKey: true,
+                allowNull: false
+            },
             completed: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: false
@@ -43,7 +44,7 @@ export default function defineModels(sequelize) {
                 type: DataTypes.STRING,
                 allowNull: false
             },
-            startedAt: { // Vilken tid en turz startades
+            startedAt: { // Vilken tid en tur startades
                 type: DataTypes.DATE,
                 default: DataTypes.NOW
             }

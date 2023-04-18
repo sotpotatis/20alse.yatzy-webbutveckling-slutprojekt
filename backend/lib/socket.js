@@ -37,11 +37,25 @@ function generateErrorResponse(errorMessage, data = null) {
     model: models.Player,
     as: "players"
 }]
+@param {function} callback En callback-funktion som exekveras när spelare har hittats.
  */
-function findGameById(models, requestedgameCode, include) {
-    models.Game.find({
+function findGameById(models, requestedgameCode, include, callback) {
+    models.Game.findAll({
         where: { gameCode: requestedgameCode },
         include: include
+    }).then((data)=>{
+        console.log(`Tog emot data om spel:`, data)
+        if (data.hasOwnProperty("length") && data.length > 0){
+            console.log("Skickar vidare första möjliga spel till callback.")
+            callback(data[0])
+        }
+        else {
+            console.log("Inget spel hittades. Talar om detta för callbacken.")
+            callback(null)
+        }
+    }).catch((error)=>{
+        console.log(`Ett fel uppstod när vi letade efter spel: ${error}. Talar om detta för callbacken.`)
+        callback(null)
     })
 }
 /**
@@ -53,11 +67,11 @@ function findGameById(models, requestedgameCode, include) {
 const socketHandlers = {
     "createGame": (message, socket, models) => { // createGame --> efterfrågan om att starta ett spel
         console.log("Tog emot en förfrågan av att skapa ett spel.")
-        const game = models.Game.create()
+        const game = models.Game.build()
         console.log("Ett spel skapades!", JSON.stringify(game))
         // Skicka information till den som skapade spelet om dess ID
         socket.emit("createGame", generateSuccessResponse({
-            gameCode: game.id
+            gameCode: game.gameCode
         }))
         console.log("...och information om det är ute i världsrymden!")
     },
@@ -66,42 +80,55 @@ const socketHandlers = {
         // Hämta detaljer från meddelandet
         const requestedgameCode = message.gameCode
         // Kolla om spelets ID finns
-        const requestedGame = findGameById(models, requestedgameCode, [{
+        findGameById(models, requestedgameCode, [{
             model: models.Player,
             as: "players"
-        }])
-        if (!requestedGame.hasAttr("length") || requestedGame.length < 1) {
+        }],(game)=> {
+            if (game === null) {
             console.log("Kunde inte hitta ett spel.")
             socket.emit("joinGame", generateErrorResponse("Kunde inte hitta ett spel med det efterfrågade ID:t"))
             return
         }
         // Om vi kommer hit finns spelet. Kolla att det inte är startat
-        requestedGame = requestedGame[0]
-        if (requestedGame.started) {
+        if (game.started) {
             console.log("Spelet är redan startat.")
             socket.emit("joinGame", generateErrorResponse("Spelet är redan startat. Vänta tills det är klart eller starta ett nytt spel."))
             return
         }
         // Om vi har hamnat här kan spelaren gå med i spelet.
         console.log("Låter spelaren gå med i spelet...")
-        const previousPlayers = requestedGame.players
+        const previousPlayers = game.players
         const playerNumber = previousPlayers.length + 1
         const player = models.Player.create({
             name: `Spelare ${playerNumber}`,
             playerId: socket.id,
             number: playerNumber + 1,
             isHost: playerNumber === 1, // Gör den första spelaren till "host" (dvs. att de har möjlighet att kunna starta spelet)
-            gameCode: requestedGame.gameCode
+            gameCode: game.gameCode
         })
         console.log("En spelare har skapats.")
         // Bekräfta att spelaren har gått med
         socket.emit("joinGame", generateSuccessResponse({}))
+        } )
+
     },
     "gameInfo": (message, socket, models) => { // gameInfo --> hämta information om ett spel
         console.log("Skickar information om ett spel från servern...")
         const requestedgameCode = message.gameCode
-        const requestedGame = findGameById(models, requestedgameCode, [])
-        console.log(`Spelinformation: ${requestedGame}.`)
+        findGameById(models, requestedgameCode, [], (requestedGame)=>{
+            console.log(`Spelinformation: ${requestedGame}.`)
+            // Vi får null tillbaka om inget spel kunde hittas.
+            if (requestedGame !== null){ // Om ett spel kunde hittas
+                socket.emit("gameInfo", generateSuccessResponse({
+                    gameInfo: requestedGame
+                }))
+            }
+            else { // Om inget spel med efterfrågat ID kunde hittas.
+                socket.emit("gameInfo", generateErrorResponse("Det spel du försöker gå med i kunde inte hittas.", {
+                    errorType: "gameNotFound"
+                }))
+            }
+        })
     }
 }
 /**
