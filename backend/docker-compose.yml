@@ -1,0 +1,15 @@
+version: 2
+services:
+  database: #MySQL-databas. Används för att lagra spel.
+    image: mysql
+    restart: always
+    env_file:
+      - mysql_server.env
+    ports:
+      - "3306:3306" #MySQL körs på port 3306
+    expose:
+      - "3306"
+    volumes:
+      -/database-storage:/var/lib/mysql #Volym där databasen monderas
+  socket-server: #Socket-server. Används för multiplayer-/flerspelarfunktionalitet
+    image: ./Socket-Server.Dockerfile
