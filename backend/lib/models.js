@@ -95,28 +95,42 @@ export default function defineModels(sequelize) {
         },
         name: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: false,
+            unique: true
         },
-        number: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
-        isHost: {
+        isOnline: {
             type: DataTypes.BOOLEAN,
+            defaultValue: true,
             allowNull: false
+        },
+        secret: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: true
+        }
+    },
+        // Göm användarens hemliga kod/token från början.
+        {
+        defaultScope: {
+                attributes: {
+                    exclude: "secret"
+            }
+        },
+        scopes: {
+            withSecret: {}
         }
     })
     // Definiera relationer mellan modellerna.
     Game.hasMany(Round, {as: "rounds"}) // Ett spel har flera rundor
-    Round.belongsTo(Game, {"foreignKey": "isIngameCode", as: "round"})
+    Round.belongsTo(Game)//, {"foreignKey": "isIngameCode", as: "round"})
     Game.hasMany(Player, {as: "players"}) // ...och flera spelare!
-    Player.belongsTo(Game, { foreignKey: "playerRound", as: "player" })
+    Player.belongsToMany(Game, { through: "GamePlayers", as: "games"}) //, { foreignKey: "game", as: "player" })
     Round.hasMany(Turn, {as: "turns"}) // Varje runda har flera turer
-    Turn.belongsTo(Round, {"foreignKey": "isInRoundId", as: "turn"})
+    Turn.belongsTo(Round)//, {"foreignKey": "isInRoundId", as: "turn"})
     Turn.hasMany(Throw, {as: "throws"}) // Varje tur har flera kast
-    Throw.belongsTo(Turn, {"foreignKey": "isInTurnId", as: "throw"})
+    Throw.belongsTo(Turn)//, {"foreignKey": "isInTurnId", as: "throw"})
     Throw.hasMany(Dice, {as: "dices"}) // Varje kast har flera tärningar
-    Dice.belongsTo(Throw, { "foreignKey": "isInThrowId", as: "dice" })
+    Dice.belongsTo(Throw)//, { "foreignKey": "isInThrowId", as: "dice" })
     Player.hasMany(Score, {as: "scores"}) // Varje spelare har poäng
-    Score.belongsTo(Player,  {"foreignKey": "isForPlayerId", as: "score" }) 
+    Score.belongsTo(Player)//,  {"foreignKey": "isForPlayerId", as: "score" })
 }

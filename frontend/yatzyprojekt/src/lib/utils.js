@@ -18,7 +18,6 @@ export function setDefaults(value, defaultValue) {
 export function openURL(url, newWindow=false) {
     window.open(url, newWindow ? "_blank": null)
 }
-
 /**
  * Funktion för att kopiera en text till klippbordet om möjligt.
  * @param text Texten som ska kopieras.
@@ -33,4 +32,10 @@ export function copyTextToClipboard(text, callbackFunction){
         console.warn(`Misslyckades med att kopiera en text till klippbordet. Följande fel inträffade (${e}).`)
         callbackFunction(false)
     }
+}
+export function getSavedAuthentication(){
+    return "userSecret" in localStorage ? localStorage.userSecret : null
+}
+export function saveAuthentication(key){
+    localStorage.userSecret = key
 }

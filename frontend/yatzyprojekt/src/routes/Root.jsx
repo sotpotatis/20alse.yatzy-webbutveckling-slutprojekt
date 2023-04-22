@@ -3,6 +3,7 @@ Renderar saker som finns på alla sidor. */
 import { Outlet } from "react-router-dom"
 import { useState } from "react"
 import { useCookies } from "react-cookie";
+import SettingsButton from "../components/Settings/SettingsButton";
 export default function Root() {
     // Hämta typsnitt och tema (inställningsbart av användaren)
     const [cookies, setCookies] = useCookies(["selectedTheme", "selectedFont"])
@@ -28,5 +29,6 @@ export default function Root() {
         className={`${[themeClass, fontClass].join(" ")} h-screen w-screen max-h-full max-w-full bg-background`}
     >
         <Outlet />
+        <SettingsButton/>
     </main>
 }

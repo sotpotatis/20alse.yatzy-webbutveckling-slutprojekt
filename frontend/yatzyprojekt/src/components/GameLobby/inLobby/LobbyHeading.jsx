@@ -18,20 +18,20 @@ export default function LobbyHeading({baseURL, gameCode}){
         }
     }
     let children = [
-        <Heading size={1} icon={"eos-icons:three-dots-loading"}>Väntar på spelare{`.`*numberOfDots}</Heading>,
+        <Heading size={1}>Väntar på spelare{`.`.repeat(numberOfDots)}</Heading>,
         <p>Låt dina kompisar gå med i spelet genom att skicka följande länk:</p>,
-        <p className="select-all px-3 py-1 rounded-full bg-gray-500" onClick={()=> {copyTextToClipboard(joinUrl, (textCopied)=>{
+        <p className="select-all px-3 py-1 rounded-full bg-gray-700 w-auto" onClick={()=> {copyTextToClipboard(joinUrl, (textCopied)=>{
             setGameCodeCopiedToClipboard(textCopied)
-        })}}></p>
+        })}}>{baseURL.trim("/")}/lobby?gameCode={gameCode}</p>
     ]
     useEffect(()=>{
         setInterval(updateNumberOfDots, 750)
     })
     // Visa ett meddelande om länken för spelet kopierats till klippbordet
     if (gameCodeCopiedToClipboard){
-        children.push(<p className="text-blue-400 text-sm">Kopierad till urklipp!</p>)
+        children.push(<p className="text-blue-200 text-sm">Kopierad till urklipp!</p>)
     }
-    return <div>
+    return <div className="text-white" key="gameLobbyHeading">
         {children}
     </div>
 }

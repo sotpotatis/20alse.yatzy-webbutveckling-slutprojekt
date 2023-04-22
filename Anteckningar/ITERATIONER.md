@@ -17,6 +17,10 @@ Koden för servern (i JavaScript) som tillhandahåller multiplayer-funktionalite
 
 **Tester:** Manuella tester för att se att alla länkar fungerar som de ska samt att servern fungerar.
 
+**Planerad tidsåtgång:** 1 vecka
+
+**Faktisk tidsåtgång:** 1 vecka
+
 ___
 
 ## Iteration 2
@@ -25,6 +29,9 @@ ___
 
 **Tester:** Automatiska tester för att testa funktioner såsom att gå med i spel.
 
+**Planerad tidsåtgång:** 1 vecka
+
+**Faktisk tidsåtgång:** --
 ___
 
 ## Iteration 3

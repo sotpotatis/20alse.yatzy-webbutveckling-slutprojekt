@@ -24,7 +24,7 @@ assert.ok(DATABASE_USER_NAME, "Du har inte speccificerat en användarnamn för d
 assert.ok(DATABASE_USER_PASSWORD, "Du har inte speccificerat ett lösenord för databasen.");
 
 // För att koppla upp samt hantera databas använder jag biblioteket och modellhanteraren Sequelize.
-// Här intieras uppkopplingen.
+// Här initieras uppkopplingen.
 console.log(`Kommer att koppla upp till ${DATABASE_SERVER}:${DATABASE_PORT} som en användare med lösenord ${DATABASE_USER_NAME} och använda databasen ${DATABASE_NAME}.`)
 const sequelize = new Sequelize(
     DATABASE_NAME,
@@ -43,7 +43,8 @@ sequelize.authenticate().then(()=>{
 }).catch((error) => { // Ifall ett fel uppstår vid uppkoppling till databasen
     console.log("Ett fel inträffade vid uppkoppling till databasen: ", error)
 })
-sequelize.sync({force: true}).then(() => {
+// Lägg till {force: true} i sync() nedan om du vill rensa databasen eller har uppdaterat modeller.
+sequelize.sync().then(() => {
     console.log("Databasensynkronisering klar.")
     // Starta nu servern som klienter kan koppla upp mot.
     // Servern använder teknologin WebSockets och biblioteket Socket.io
@@ -55,7 +56,7 @@ sequelize.sync({force: true}).then(() => {
         }
     })
     socketServer.on("connection", (socket) => {
-        console.log("En användare anslöt upp till servern!")
+        console.log("En användare anslöt till servern!")
         socketHandler(socket, sequelize.models) // Registrera meddelandehanterare
     })
     socketServer.on("disconnect", (socket) => {
