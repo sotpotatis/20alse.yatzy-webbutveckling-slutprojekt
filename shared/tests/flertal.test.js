@@ -2,6 +2,7 @@
 Testar att funktioner relaterade till flertal fungerar.
 */
 const { possibleDiceStates } = require("../gameStateCalculations")
+const { randomNumberExcept } = require("./utils")
 const functionsToTest = [
     "ettor",
     "tvåor",
@@ -16,6 +17,6 @@ for (let i = 0; i < functionsToTest.length; i++){
     const functionToTest = possibleDiceStates[functionNameToTest].calculatePoints
     const number = i + 1
     test(`Testar att funktionen ${functionNameToTest} fungerar`, () => {
-        expect(functionToTest([number, number, number, 5, 6])).toBe(number * 3)
+        expect(functionToTest([number, number, number, randomNumberExcept(1, 6, number), randomNumberExcept(1, 6, number)])).toBe(number * 3)
     })
 }

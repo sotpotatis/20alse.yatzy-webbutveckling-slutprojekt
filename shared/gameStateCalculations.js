@@ -8,11 +8,11 @@ Innehåller funktioner för att detektera olika lägen i spelet. */
 function countNumbersInArray(array) {
     let numbers = {}
     for (const element of array) {
-        if (Object.entries(numbers).includes(element)){ // Om numret redan har hittats
-            numbers[element.toString()] ++
+        if (Object.keys(numbers).includes(element.toString())){ // Om numret redan har hittats
+            numbers[element]++
         }
         else { // Om det är första gången man hittar numret.
-            numbers[element.toString()] = 1
+            numbers[element] = 1
         }
     }
     return numbers
@@ -28,7 +28,7 @@ function countNumbersInArray(array) {
 function countNumberInArray(array, number) {
     const numberCounts = countNumbersInArray(array) // Räkna alla nummer i arrayen
     // Om numret finns i arrayen, returnera hur många gånger det förekommer. Annars, returnera 0.
-    return Object.entries(numberCounts).includes(number.toString()) ? numberCounts[number.toString()] : 0
+    return Object.keys(numberCounts).includes(number.toString()) ? numberCounts[number.toString()] : 0
 }
 /**
  * För ettor, tvåor osv. så är det samma princip för att kolla om användaren kan få de.
@@ -42,10 +42,10 @@ function checkSingleDicePossible(dices, number) {
 /**
  * Beräkna förekomsten av par i en uppsättning tärningar.
  * @param {array} dices Tärningarnas aktuella nummer som en lista.
- * @returns En array som innehåller <antalet par>, <de par som hittades>
+ * @returns En array som innehåller antalet par, de par som hittades
  */
 function calculatePairs(dices) {
-    const numberCounts = countsNumberInArray(dices)
+    const numberCounts = countNumbersInArray(dices)
     let numberOfPairs = 0
     let foundPairs = []
     for (const [number, numberCount] of Object.entries(numberCounts)) {
@@ -83,7 +83,7 @@ function calculateDiceStatePoints(stateInformation, dices, calculationFunction) 
 function calculateSumOfDices(dices, include=null) {
     let sum = 0
     for (const dice of dices) {
-        if (include === null || include.includes(dice)) { // Om tärningen ska inkluderas i beräkningen.
+        if (include === null || include.includes(dice) || include.includes(dice.toString())) { // Om tärningen ska inkluderas i beräkningen.
             sum += dice
         }
     }
@@ -228,13 +228,13 @@ const possibleDiceStates = {
             pointsInformation: "Summan av de tärningar som ingår i paret."
         },
         givesMoreThanZeroPoints: (dices) => {
-            return calculatePairs(dices)[0] == 1
+            return calculatePairs(dices)[0] === 1
         },
         calculatePoints: (dices) => {
             return calculateDiceStatePoints(
                 possibleDiceStates.par, dices,
                 (dices) => {
-                    return calculateSumOfDices(dices, calulatePairs(dices)[1]) // calculatePairs ger tillbaka de tärningar som ger poäng för par.
+                    return calculateSumOfDices(dices, calculatePairs(dices)[1]) // calculatePairs ger tillbaka de tärningar som ger poäng för par.
                 }
             )
         }
@@ -246,13 +246,13 @@ const possibleDiceStates = {
             pointsInformation: "Summan av de tärningar som ingår i paren."
         },
         givesMoreThanZeroPoints: (dices) => {
-            return calculatePairs(dices)[0] == 2
+            return calculatePairs(dices)[0] === 2
         },
         calculatePoints: (dices) => {
             return calculateDiceStatePoints(
                 possibleDiceStates.två_par, dices,
                 (dices) => {
-                    return calculateSumOfDices(dices, calulatePairs(dices)[1]) // calculatePairs ger tillbaka de tärningar som ger poäng för par.
+                    return calculateSumOfDices(dices, calculatePairs(dices)[1]) // calculatePairs ger tillbaka de tärningar som ger poäng för par.
                 }
             )
         }
@@ -301,12 +301,20 @@ const possibleDiceStates = {
             description: "Tre av tärningarna visar ett och samma tal och de övriga två visar ett annat (men samma) tal.",
             pointsInformation: "Summan av alla tärningar på brädet."
         },
+        calculatePoints: (dices) => {
+            return calculateDiceStatePoints(
+                possibleDiceStates.kåk, dices,
+                (dices) => {
+                    return calculateSumOfDices(dices,  null)
+                }
+            )
+        },
         givesMoreThanZeroPoints: (dices) => {
             // Tre av tärningarna ska visa samma tal medan övriga två ska visa ett av samma tal.
             const numberCounts = countNumbersInArray(dices)
-            const foundNumbers = Object.keys(numberCounts.length)
-            if (foundNumbers === 2) { // Krav 1: Tärningarna ska visa två nummer
-                return (numberCounts[foundNumbers][0] === 3 || numberCounts[foundNumbers][1] === 3) // Krav 2: 3 av tärningarna ska visa samma tal
+            const foundNumbers = Object.keys(numberCounts)
+            if (foundNumbers.length === 2) { // Krav 1: Tärningarna ska visa två nummer
+                return (numberCounts[foundNumbers[0]] === 3 || numberCounts[foundNumbers[1]] === 3) // Krav 2: 3 av tärningarna ska visa samma tal
             }
         }
     },
@@ -319,7 +327,7 @@ const possibleDiceStates = {
         givesMoreThanZeroPoints: (dices) => {
             // Vi ska ha 1, 2, 3, 4 och 5.
             const numberCounts = countNumbersInArray(dices)
-            const foundNumbers = Object.keys(numberCounts.length)
+            const foundNumbers = Object.keys(numberCounts)
             if (foundNumbers.length === 5) { // Steg 1: 5 unika nummer.
                 return (!foundNumbers.includes(6)) // Steg 2: Inkluderar inte 6.
             }

@@ -21,7 +21,6 @@ export default function Root() {
         selectedTheme = userPrefersDarkMode ? "dark": "light"
         setCookies("selectedTheme", selectedTheme)
     }
-  
     // Skapa en lista med klasser som ska appliceras för tema och typsnitt
     const themeClass = selectedTheme === "dark" ? "dark" : ""
     const fontClass = selectedFont === "main" ? "font-main" : "font-dyslexic"

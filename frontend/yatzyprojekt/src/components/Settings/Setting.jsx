@@ -5,8 +5,8 @@ export default function Setting({type, title,value, setter, }){
     if (type === "toggle"){
         settingElement = <Toggle value={value} onSet={setter}/>
     }
-    return <div className="flex flex-row">
-        <p className="text-gray-200">{title}</p>
+    return <div className="flex flex-row gap-x-3">
+        <p className="text-gray-400">{title}</p>
         {settingElement}
     </div>
 }
