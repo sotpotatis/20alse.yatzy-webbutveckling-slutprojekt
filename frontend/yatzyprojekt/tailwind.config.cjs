@@ -12,5 +12,7 @@ module.exports = {
       }
     },
   },
-  plugins: [],
+  plugins: [
+    require("tailwindcss-3d")({legacy: true}) // Används för 3D-kuber.
+  ],
 }

@@ -31,7 +31,7 @@ ___
 
 **Planerad tidsåtgång:** 1 vecka
 
-**Faktisk tidsåtgång:** --
+**Faktisk tidsåtgång:** 1,5 vecka
 ___
 
 ## Iteration 3

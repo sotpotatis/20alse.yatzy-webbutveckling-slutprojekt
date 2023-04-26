@@ -1,4 +1,7 @@
-import {useState} from "react";
+/* SettingsButton.jsx
+* En knapp längst ner i vänstra hörnet för några inställningar relaterade till sidan.
+*/
+import { useState } from "react";
 import {Icon} from "@iconify/react";
 import SettingsMenu from "./SettingsMenu";
 import Setting from "./Setting";
@@ -22,7 +25,7 @@ export default function SettingsButton(props){
                         }
                         setter={ 
                             (isToggled) => { // Sätt font baserat på värde.
-                                cookies.selectedFont === isToggled ? "dyslexic": "main"
+                                setCookies("selectedFont", isToggled ? "dyslexic" : "main")
                             }
                         } />
                 ]
