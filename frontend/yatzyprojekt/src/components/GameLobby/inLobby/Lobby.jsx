@@ -3,6 +3,7 @@ import { SocketContext } from "../../../context/socket"
 import LoadingSpinner from "../../LoadingSpinner"
 import ErrorContainer from "../../ErrorContainer"
 import {getSavedAuthentication, openURL, saveAuthentication} from "../../../lib/utils.js";
+import {redirect, useNavigate} from "react-router-dom";
 import Player from "../../Player/Player";
 import LobbyHeading from "./LobbyHeading";
 import Button from "../../Button";
@@ -13,6 +14,7 @@ import Heading from "../../Heading";
 Renderar "lobbyn" som är när man väntar på ett spel. */
 export default function Lobby({gameCode, setGameCode}) {
     const socket = useContext(SocketContext) // Kom åt kopplingen till socket-servern
+    const navigate = useNavigate() // ...och möjligheten att navigera!
     const checkIsConnected = () => { setConnectionPending(!socket.connected) }
     // Ställ in några variabler för att visa olika laddningsmeddelanden.
     const [connectionPending, setConnectionPending] = useState(!socket.connected)
@@ -41,7 +43,7 @@ export default function Lobby({gameCode, setGameCode}) {
                     setContactingServer(false)
                     if (response.status === "success"){
                         console.log("Ett nytt spel har skapats.")
-                        openURL(`?gameCode=${response.gameCode}`)
+                        navigate(`?gameCode=${response.gameCode}`)
                         setGameCreated(true)
                     }
                     else { // Hantera fel
@@ -64,7 +66,7 @@ export default function Lobby({gameCode, setGameCode}) {
                         console.warn(`Misslyckades med att inhämta spelinformation: ${response.errorMessage}.`)
                         // Om felet skulle vara specifikt att ett spel inte går att hittas, omdirigera till där man skriver in spelkoden.
                         if (response.errorType !== null && response.errorType === "gameNotFound"){
-                            openURL(`?gameCode=${gameCode}&error=gameNotFound`)
+                            navigate(`?gameCode=${gameCode}&error=gameNotFound`)
                         }
                         else { // Om vi får ett generiskt fel.
                             setErrorMessage(response.errorMessage)

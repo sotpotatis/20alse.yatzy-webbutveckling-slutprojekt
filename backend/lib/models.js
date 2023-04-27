@@ -25,43 +25,16 @@ export default function defineModels(sequelize) {
             createdAt: {
                 type: DataTypes.DATE,
                 defaultValue: DataTypes.NOW
-            }
-        }
-    )
-    // En runda refererar till en "spelrunda" där varje spelare fått kasta tärningen och fått ett resultat. 
-    const Round = sequelize.define(
-        "Round", {
-            number: {
-                type: DataTypes.INTEGER,
-                allowNull: false
-            }
-        }
-    )
-    // En tur refererar till en uppsättning tärningskast av en spelare (varje spelare har max tre tärningskast per tur).
-    const Turn = sequelize.define(
-        "Turn", {
-            ownedBy: { // Spelarens ID som kör den aktuella turen
+            },
+            currentPlayerName: { // Namnet på spelaren som just nu kastar tärningen.
                 type: DataTypes.STRING,
                 allowNull: false
-            },
-            startedAt: { // Vilken tid en tur startades
-                type: DataTypes.DATE,
-                default: DataTypes.NOW
             }
         }
     )
-    // Throw refererar till ett tärningskast under en runda (man har max tre kast på en runda)
-    const Throw = sequelize.define(
-        "Throw", {
-            number: {
-                type: DataTypes.INTEGER,
-                allowNull: false
-            }
-        }
-    )
-    // Dice refererar till statusen på en enskild tärning. Det kommer därför finnas sex stycken sådana här per Throw.
+    // Dice refererar till statusen på en enskild tärning. Det kommer därför finnas fem stycken sådana här
     const Dice = sequelize.define("Dice", {
-        saved: {
+        saved: { // Om tärningen är låst/sparad eller inte
             type: DataTypes.BOOLEAN,
             allowNull: false
         },
@@ -78,13 +51,9 @@ export default function defineModels(sequelize) {
                 is: /ettor|tvåor|treor|fyror|femmor|sexor|bonus|par|två_par|triss|fyrtal|kåk|liten_stege|stor_stege|chans|yatzy/
             }
         },
-        point: { // Hur många poäng som den aktuella koden har
+        points: { // Hur många poäng som den aktuella saken har
             type: DataTypes.INTEGER,
-            allowNull: false
-        },
-        number: { // Man kan ha få varje sak i sin tabell flera gånger
-            type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: false // Om en användare inte har "claimat" en poäng så kommer den istället inte att returneras från servern.
         }
     })
     // Player refererar till en enskild spelare som är uppkopplad till plattformen.
@@ -103,7 +72,7 @@ export default function defineModels(sequelize) {
             defaultValue: true,
             allowNull: false
         },
-        secret: {
+        secret: { // Hemlig kod/token som används för att autentisera användaren.
             type: DataTypes.STRING,
             allowNull: false,
             unique: true
@@ -121,16 +90,13 @@ export default function defineModels(sequelize) {
         }
     })
     // Definiera relationer mellan modellerna.
-    Game.hasMany(Round, {as: "rounds"}) // Ett spel har flera rundor
-    Round.belongsTo(Game)//, {"foreignKey": "isIngameCode", as: "round"})
-    Game.hasMany(Player, {as: "players"}) // ...och flera spelare!
-    Player.belongsToMany(Game, { through: "GamePlayers", as: "games"}) //, { foreignKey: "game", as: "player" })
-    Round.hasMany(Turn, {as: "turns"}) // Varje runda har flera turer
-    Turn.belongsTo(Round)//, {"foreignKey": "isInRoundId", as: "turn"})
-    Turn.hasMany(Throw, {as: "throws"}) // Varje tur har flera kast
-    Throw.belongsTo(Turn)//, {"foreignKey": "isInTurnId", as: "throw"})
-    Throw.hasMany(Dice, {as: "dices"}) // Varje kast har flera tärningar
-    Dice.belongsTo(Throw)//, { "foreignKey": "isInThrowId", as: "dice" })
+    // Definiera relationer angående spelare
+    Game.hasMany(Player, {as: "players"})
+    Player.belongsToMany(Game, { through: "GamePlayers", as: "games"}) // En spelare kan vara med i flera spel
+    // Definiera relationer angående tärningar
+    Game.hasMany(Dice, {as: "dices"}) // Varje kast har flera tärningar
+    Dice.belongsTo(Game)
+    // Definiera relationer angående poäng
     Player.hasMany(Score, {as: "scores"}) // Varje spelare har poäng
-    Score.belongsTo(Player)//,  {"foreignKey": "isForPlayerId", as: "score" })
+    Score.belongsTo(Player)
 }

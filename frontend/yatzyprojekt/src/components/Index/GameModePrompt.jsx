@@ -3,7 +3,7 @@ Frågar användaren om vilket spelläge de vill använda. */
 import { openURL } from "../../lib/utils";
 import Button from "../Button";
 import Container from "../Container";
-import {redirect} from "react-router-dom";
+import {redirect, useNavigate} from "react-router-dom";
 import {useState} from "react";
 export default function GameModePrompt(props) {
     // Det finns två olika steg:
@@ -12,15 +12,16 @@ export default function GameModePrompt(props) {
     // Steg 2 (endast om användaren vill spela som flera spelare):
     // Fråga om användaren vill skapa ett nytt spel eller har en spelkod för att gå med.
     const [currentStep, setCurrentStep] = useState(1) // Vi vill såklart börja på steg 1!
+    const navigate = useNavigate()
     // Definiera funktion för att skapa spel
     const createGame = (gameType) => {
         // Omdirigera baserat på vilket spel.
-        console.log(`Skapar ett spel av stypen ${gameType}...`)
+        console.log(`Skapar ett spel av typen ${gameType}...`)
         if (gameType === "multiplayer") {
-            openURL("/yatzy/lobby") // Omdirigera till en spellobby där man kan vänta på sina vänner
+            navigate("/yatzy/lobby" ) // Omdirigera till en spellobby där man kan vänta på sina vänner
         }
         else {
-            openURL("/yatzy/game?mode=singleplayer") // Omdirigera till själva spelplanen.
+            navigate("/yatzy/game?mode=singleplayer") // Omdirigera till själva spelplanen.
         }
     }
     let title = null
@@ -43,7 +44,7 @@ export default function GameModePrompt(props) {
             }/>,
             <Button color="lightGreen" text="Skapa ett nytt spel" icon="material-symbols:add-circle" onClick={
                 () => {
-                    openURL("/yatzy/lobby?gameCode=new") // Omdirigera till lobbyn med en gameCode på "new" som automatiskt skapar ett nytt spel.
+                    navigate("/yatzy/lobby?gameCode=new") // Omdirigera till lobbyn med en gameCode på "new" som automatiskt skapar ett nytt spel.
                 }
             }/>,
 

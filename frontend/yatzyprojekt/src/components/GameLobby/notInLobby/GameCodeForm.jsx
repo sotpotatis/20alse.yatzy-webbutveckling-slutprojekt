@@ -4,8 +4,9 @@ import { openURL } from "../../../lib/utils";
 import Button from "../../Button";
 import InputField from "../../InputField";
 import {useState} from "react";
-import {useSearchParams} from "react-router-dom";
+import {redirect, useNavigate, useSearchParams} from "react-router-dom";
 export default function GameCodeForm({ gameCode, onGameCode }) {
+    const navigate = useNavigate()
     const [gameCodeHasBeenUpdated, setGameCodeHasBeenUpdated] = useState(false)
     // Kolla om en giltig kod för ett spel ställts in (ska vara ett nummer större än 0)
     const validGameCodeEnterred = !Number.isNaN(Number.parseInt(gameCode)) && Number(gameCode) > 0
@@ -25,7 +26,7 @@ export default function GameCodeForm({ gameCode, onGameCode }) {
         // (vi vill visa ett felmeddelande om användaren angivit minst ett tecken i spelkoden och det som just nu är angivet är ogiltigt)
         showInputFieldInvalidMessage = !validGameCodeEnterred && gameCode !== null && gameCode.length > 0
     }
-    return <div>
+    return <div key="game-code-form">
         <form className="flex flex-col gap-y-4">
             <InputField type={"text"} value={gameCode} invalid={showInputFieldInvalidMessage} invalidExplanation={inputFieldInvalidExplanation} placeholder={"Kod"}
                 label={"Spelkod"} id="game-code-input"
@@ -37,7 +38,7 @@ export default function GameCodeForm({ gameCode, onGameCode }) {
                 onClick={() => { // När knappen klickas på, validera spelarkoden. Om giltig, starta lobbyn.
                     if (validGameCodeEnterred) {
                         console.log("Går med i ett spel.")
-                        openURL(`?gameCode=${gameCode}`)
+                        navigate(`?gameCode=${gameCode}`)
                     }
                 } } />
         </form>

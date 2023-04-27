@@ -59,6 +59,36 @@ function findGameById(models, requestedgameCode, include, callback) {
         callback(null)
     })
 }
+/**
+ * Hjälpfunktion för att hitta en spelare med hjälp av dess namn.
+ * @param {object} models Sequelize-modeller, se argumenten till funktionen socketHandler.
+ * @param {string} playerName Den spelkoden för spelet som efterfrågas.
+ * @param {Array} include Extra information att inkludera från modellen. Till exempel följande för att inkludera poängen
+för spelaren [{
+    model: models.Scpre,
+    as: "scores"
+}]
+@param {function} callback En callback-funktion som exekveras när spelare har hittats.
+ */
+function findPlayerByName(models, playerName, include, callback) {
+    models.Player.findAll({
+        where: { name: playerName },
+        include: include
+    }).then((data)=>{
+        console.log(`Tog emot data om spelare:`, data)
+        if (data.hasOwnProperty("length") && data.length > 0){
+            console.log("Skickar vidare första möjliga spelare till callback.")
+            callback(data[0])
+        }
+        else {
+            console.log("Ingen spelare hittades. Talar om detta för callbacken.")
+            callback(null)
+        }
+    }).catch((error)=>{
+        console.log(`Ett fel uppstod när vi letade efter en spelare: ${error}. Talar om detta för callbacken.`)
+        callback(null)
+    })
+}
 
 /**
  * För att möjliggöra multiplayer där man kan gå med och sedan spela som önskad spelare så måste vi implementera någon
@@ -87,6 +117,15 @@ function validatePlayerAuthorization(models, secretKey, callback){
         callback(playerNotAuthenticated)
     })
 
+}
+
+/**
+ * Genererar ett slumpmässigt nummer mellan två tal.
+ * @param start Lägsta möjliga numret som ska genereras.
+ * @param end Högsta möjliga numret som ska genereras.
+ */
+function randomNumber(start,end){
+    return ~~(Math.random() * (end-start+1)) + start// (~~ är snabbare än Math.floor, se https://stackoverflow.com/a/50189413)
 }
 /**
  * Genererar ett roligt spelarnamn.
@@ -117,7 +156,7 @@ function generatePlayerName(models, callback){
         "Förlorare"
     ]
     const randomItemFromArray = (array)=>{ // Definiera en genväg till att ta en slumpmässig sak från en array
-        return array[~~(Math.random() * array.length)] // (~~ är snabbare än Math.floor, se https://stackoverflow.com/a/50189413)
+        return array[~~(randomNumber(0, array.length))] // (~~ är snabbare än Math.floor, se https://stackoverflow.com/a/50189413)
     }
     const playerName = randomItemFromArray(nameBeginnings) + randomItemFromArray(nameEndings) + ~~(Math.random() * (99-10)) + 10
     // Dubbelkolla att spelarnamnet är unikt
@@ -171,7 +210,7 @@ function sendGameStateUpdate(models, requestedGameCode, socket){
  * @param {object} models Åtkosmt till att hantera samt komma åt Sequelize-modeller (sequelize.models) som innehåller samt definierar speldata.
  */
 const socketHandlers = {
-    "createGame": (message, socket, models) => { // createGame --> efterfrågan om att starta ett spel
+    "createGame": (message, socket, models) => { // createGame --> efterfrågan om att skapa ett spel
         console.log("Tog emot en förfrågan av att skapa ett spel.")
         const game = models.Game.build()
         game.save().then(()=>{
@@ -324,6 +363,202 @@ const socketHandlers = {
 
         }).catch((error)=>{
             console.warn(`Misslyckades med att ta bort en nedkopplad spelare från ett spel ${error}.`)
+        })
+    },
+    "startGame": (message, socket, models)=>{ // Starta ett spel
+        console.log("Tog emot en förfrågan om att starta ett spel!")
+        findGameById(models, message.gameCode, [{
+            model: models.Player,
+            as: "players",
+        },
+        {
+            model: models.Dice,
+            as: "dices"
+        }], (game)=>{
+            if (game === null) {
+                console.log("Kunde inte hitta ett spel.")
+                socket.emit("startGame", generateErrorResponse("Kunde inte hitta ett spel med det efterfrågade ID:t"))
+                return
+            }
+            // Om vi kommer hit finns spelet. Kolla att det inte är startat
+            if (game.started) {
+                socket.emit("startGame", generateErrorResponse("Spelet är redan startat."))
+            }
+            // Om vi kommer hit är allting redo så att säga!
+            game.started = true
+            game.save().then(()=>{
+                console.log("Spelet har startats. Meddelar alla anslutna...")
+                socket.to(game.gameCode.toString()).emit("startGame", generateSuccessResponse({
+                    gameStarted: true
+                }))
+                // NU är det dags att börja köra själva spelet. Vi börjar alltså här.
+                // Skapa lite hjälpfunktioner
+                /**
+                 * Hämtar vilken spelare som står på tur härnäst
+                 * @return {*} Nästa spelare som ska spela
+                 */
+                function getNextPlayer(){
+                    console.log("Hittar nästa användare som ska spela...")
+                    let currentPlayerIndex = 0
+                    for(currentPlayerIndex = 0;currentPlayerIndex<game.players.length;currentPlayerIndex++){
+                        if (player.name === game.currentPlayerName){
+                            break
+                        }
+                    }
+                    // Hitta nästa spelare
+                    if (currentPlayerIndex<game.players.length-1){
+                        return game.players[currentPlayerIndex+1]
+                    }
+                    else { // (om vi har kommit till slutet av listan vill vi börja om från början
+                        return game.players[0]
+                    }
+                }
+                // Väntar tills alla tärningar har uppdaterats och kallar sedan en funktion
+                /**
+                 * Möjliggör att uppdatera tärningar och vänta tills alla tärningars status har uppdaterats i databasen.
+                 * Inkluderar en timeout på 20 sekunder för alla uppdateringar.
+                 * @param dices En lista på alla tärningar som ska uppdateras
+                 * @param updateFunction En funktion som ska köras på varje tärning. Ska returnera tärningens uppdaterade status
+                 * @param callback En callback som ska köras när alla tärningar har uppdaterats.
+                 */
+                function waitForDiceUpdate(dices, updateFunction, callback){
+                    let numberOfDiceUpdated = 0 // Vi behöver en counter då funktionen kör async. Hade varit lite snyggare om jag gjort alla funktioner här async.
+                    // men det finns ju alltid något som kan förbättras.
+                    for (const dice of dices){
+                        const updatedDice = updateFunction(dice) // updateFunction passas som argument och specificerar vad som ska uppdateras på tärningen
+                        updatedDice.update().then(()=>{ // Efter varje tärning uppdaterats, uppdatera nästa tärning.
+                        numberOfDiceUpdated += 1
+                    })
+                    }
+                    // Vänta tills alla tärningar har uppdaterats och skicka sedan ett uppdaterat "gameState"
+                    console.log("Väntar tills alla tärningar har uppdaterats...")
+                    let secondsElapsed = 0
+                    const interval = setInterval(()=>{
+                        if (numberOfDiceUpdated < dices.length){
+                            console.log(`Väntar fortfarande på tärningsuppdateringar...`)
+                            if (secondsElapsed > 20){
+                                console.log("Timeout nådd. Skickar felmeddelande.")
+                                generateErrorResponse("Timeout nåddes vid databasuppkoppling. Vänligen försök igen lite senare")
+                            }
+                        }
+                        else {
+                            clearInterval(interval) // Ta bort kontrollen och gå vidare
+                            callback()
+                        }
+                    }, 100) // Kolla var 0.1 sekund
+                }
+                /** Förbereder spelplanen för en ny spelare.
+                 * @param newPlayerName Spelarens nya namn.
+                 * @param callback En callback som ska köras när alla aktuella saker har uppdaterats i databasen.
+                 */
+                function prepareForPlayer(newPlayerName, callback){
+                    console.log("Förbereder för en ny spelare...")
+                    game.currentPlayerName = newPlayerName // Uppdatera den aktuella spelarens namn.
+                    game.update().then(()=>{
+                        // Återställ varje tärning
+                        waitForDiceUpdate(game.dices, (dice)=>{dice.saved=false;return dice}, ()=>{
+                            console.log("Alla tärningar har uppdaterats och spelet är nu redo för nästa spelare.")
+                            callback()
+                        })
+                    })
+                }
+                /**Genererar slumpmässiga nummer på tärningarna i spelet
+                 * @param callback En funktion som ska köras efter att numrena genererats klart.
+                 */
+                function generateDiceNumbers(callback){
+                    console.log("Genererar nummer på tärningarna....")
+                    waitForDiceUpdate(game.dices, (dice)=>{
+                        dice.number = randomNumber(1, 6)
+                    }, ()=>{
+                        console.log("Numret på alla tärningar har uppdaterats.")
+                        callback()
+                    })
+                }
+                /**
+                 * Uppdaterar poängen för den aktuella användaren som spelar spelet.
+                 * @param typeOfPoint Typen av poäng som användaren vill uppdatera. Till exempel "ettor" för att
+                 * uppdatera poängen för användarens ettor.
+                 * @param callback En funktion som ska köra när användarens poäng uppdaterats.
+                 */
+                function updateUserScore(typeOfPoint, callback){
+                    console.log("Uppdaterar poäng för den aktuella användaren...")
+                    let diceNumbers = [] // Skapa en lista som endast innehåller tärningarnas nummer
+                    for (const dice of game.dices){
+                        diceNumbers.push(dice.number)
+                    }
+                    // Kör funktion för att hitta poäng för alla tärningar
+                    // TODO kör funktionen här
+                    // Kolla att användaren inte har plockat denna poäng innan
+                    findPlayerByName(models, game.currentPlayerName, [{model: models.Score, "as": "scores"}], (player)=>{
+                        if (player !== null){
+                            let previouslyClaimedScores = [] // Skapa en lista med alla tidigare scores som claimats.
+                            for (const score of player.scores){
+                                previouslyClaimedScores.push(score.scoreType)
+                            }
+                            if (previouslyClaimedScores.includes(typeOfPoint)){
+                                console.warn(`Den aktuella spelaren verkar redan ha plockat poängen ${typeOfPoint}.`)
+                                console.log("Spelplanen kommer inte att uppdateras.")
+                                callback()
+                            }
+                            else {
+                                console.log("Uppdaterar poäng...")
+                                const newScore = models.Score.build({
+                                    scoreType: typeOfPoint,
+                                    score: 0 // TODO beräkna här
+                                })
+                                player.addScore(newScore).then(callback)
+                            }
+                        }
+                    })
+                }
+                function updateRound(){
+                    console.log("Väljer ut en användare som ska spela...")
+                    const nextPlayer = getNextPlayer()
+                    prepareForPlayer(nextPlayer, ()=>{
+                        console.log("Spelplanen har förberetts.")
+                        // Skicka uppdaterat gameState
+                        console.log("Skickar ett uppdaterat gameState...")
+                        sendGameStateUpdate(models, game.gameCode, socket)
+                        console.log("gameState uppdaterad.")
+                        // Lyssna efter förfrågan att kasta tärningar
+                        socket.on("diceRoll", (message)=>{
+                            console.log("Tog emot en förfrågan att kasta en tärning. Validerar att den kommer från den aktuella användaren...")
+                            findPlayerByName(models, game.currentPlayerName, [],(player)=>{ // Hitta den aktuella spelaren i spelet
+                                if (player.playerId === socket.id){
+                                    // Kasta tärningarna
+                                    generateDiceNumbers(()=>{
+                                        console.log("Tärningarna har kastats och spelaren har underrättats.")
+                                        sendGameStateUpdate(models, game.gameCode, socket)
+                                    })
+                                }
+                                else {
+                                    console.warn(`Tog emot förfrågan att kasta tärningen från en användare som just nu inte ska få kasta tärningen: ${player.playerId}!=${socket.id}.`)
+                                    // Skicka felmeddelande
+                                    socket.emit("diceRoll", generateErrorResponse("Det är inte din tur. Om du inte har försökt att hacka spelet är det något fel i min kod. Försök igen lite senare."))
+                                }
+
+                            })
+                        })
+                        // Lyssna efter förfrågan att skriva in sin poäng
+                        socket.on("pickScore", (message)=>{
+                            console.log("Tog emot en förfrågan om att skriva in poäng.")
+                            // Vilken poäng som man ska uppdatera finns i message.requestedScoreType.
+                            // TODO: Validera att denna variabel är ok.
+                            if (message.requestedScoreType === undefined){
+                                console.warn(`Tog emot felaktig förfrågan angående att välja att spara en poäng (efterfrågad poängtyp: ${message.requestedScoreType}).`)
+                                socket.emit("pickScore", generateErrorResponse("Felaktigt meddelandeformat. Om du inte försökt att hacka eller manipulera spelet är det något fel i min kod. Försök igen lite senare."))
+                                return
+                            }
+                            updateUserScore(message.requestedScoreType, ()=>{
+                                socket.emit("pickScore", {message: "Poängen har uppdaterats"})
+                            })
+                        })
+                    })
+                }
+            }).catch((error)=>{
+                console.warn(`Ett fel inträffade när spelet skulle startas: ${e}`)
+                socket.emit("startGame", generateErrorResponse("Ett internt serverfel inträffade. Testa att komma tillbaka lite senare."))
+            })
         })
     }
 }
