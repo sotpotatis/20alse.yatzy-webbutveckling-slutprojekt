@@ -4,6 +4,7 @@ import Container from "../components/Container"
 import ErrorContainer from "../components/ErrorContainer"
 import DiceWrapper from "../components/Game/DiceWrapper"
 import ScoreBoardWrapper from "../components/Game/ScoreboardWrapper"
+import PlayerWrapper from "../components/Game/PlayerWrapper"
 /* Game.jsx
 Innehåller själva spelet. */
 export default function Game({isMultiplayer, gameCode, gameStateHandler}) {
@@ -49,6 +50,6 @@ export default function Game({isMultiplayer, gameCode, gameStateHandler}) {
                     me: false
             }
         } />
-        <ScoreBoardWrapper/>
+        <ScoreBoardWrapper />
     </div>
 }

@@ -28,10 +28,10 @@ export default function GameModePrompt(props) {
     if (currentStep === 1){
         title = "Välj spelläge"
         children = [
-            <Button color="lightGreen" text="Lokalt" icon="mdi:person-circle" onClick={
+            <Button color="lightGreen" text="Lokalt" icon="clarity:computer-solid" onClick={
                 () => {createGame("singleplayer")}
             }/>,
-            <Button color="lightBlue" text="Online" icon="material-symbols:group" onClick={() => {setCurrentStep(2)}
+            <Button color="lightBlue" text="Online" icon="material-symbols:link" onClick={() => {setCurrentStep(2)}
         }/>
         ]
     }

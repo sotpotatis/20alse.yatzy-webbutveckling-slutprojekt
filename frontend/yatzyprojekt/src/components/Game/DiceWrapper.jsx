@@ -1,3 +1,4 @@
+import Button from "../Button"
 import Dice from "./Dice"
 
 /* DiceWrapper.jsx
@@ -15,7 +16,7 @@ export default function DiceWrapper({ diceStates, isClaimedBy }) {
     }
     // Lägg till alla tärningar
     children.push(<div key="dices-wrapper" className="grid grid-cols-5 gap-x-12">
-    {dices}
+        {dices}
     </div>)
     // Om isClaimedBy.isMe är false kan inte användarens webbläsare klicka på tärningarna eftersom någon annan
     // håller på att rulla de. Detta används för multiplayer-läget.
@@ -27,6 +28,10 @@ export default function DiceWrapper({ diceStates, isClaimedBy }) {
     }
     return <div className={`col-span-3 py-12 px-3`} key="dices-page">
         {children}
+        <div key="buttons" className="flex flex-row gap-x-12 p-3 w-full justify-center">
+            <Button color="green" text="Slå" icon="ooui:reload" />
+            <Button color="red" text="Avsluta" icon="majesticons:close-line" />
+        </div>
     </div>
 }
 DiceWrapper.defaultProps = {

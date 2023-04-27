@@ -94,32 +94,32 @@ function validatePlayerAuthorization(models, secretKey, callback){
  * @param callback En callback-funktion som ska ta emot spelarnamnet.
  */
 function generatePlayerName(models, callback){
-    // Ett spelarnamn baseras på adjektiv och nummer.
-    const adjectives = [
+    // Ett spelarnamn baseras på adjektiv och adjektiv/substantiv.
+    const nameBeginnings = [
         "Knasig",
-        "Fantastisk",
+        "Cool",
         "Toppen",
-        "Extraordinär",
+        "Perfekt",
         "Fåfäng",
-        "Pragmatisk",
+        "Dansande",
         "Noggrann",
         "Snygg"
     ]
-    const animals = [
-        "Kossa",
-        "Katt",
-        "Hund",
-        "Undulat",
-        "Kanin",
-        "Rådjur",
-        "Lodjur",
-        "Varg",
-        "Åsnna"
+    const nameEndings = [
+        "Knasboll",
+        "Fåntratt",
+        "Gymnast",
+        "Kompis",
+        "Spelare",
+        "Kock",
+        "Gamer",
+        "Vinnare",
+        "Förlorare"
     ]
     const randomItemFromArray = (array)=>{ // Definiera en genväg till att ta en slumpmässig sak från en array
         return array[~~(Math.random() * array.length)] // (~~ är snabbare än Math.floor, se https://stackoverflow.com/a/50189413)
     }
-    const playerName = randomItemFromArray(adjectives) + randomItemFromArray(animals) + ~~(Math.random() * (99-10)) + 10
+    const playerName = randomItemFromArray(nameBeginnings) + randomItemFromArray(nameEndings) + ~~(Math.random() * (99-10)) + 10
     // Dubbelkolla att spelarnamnet är unikt
     models.Player.findAll({
     where: {name: playerName}
