@@ -27,8 +27,15 @@ export default function defineModels(sequelize) {
                 defaultValue: DataTypes.NOW
             },
             currentPlayerName: { // Namnet på spelaren som just nu kastar tärningen.
-                type: DataTypes.STRING,
-                allowNull: false
+                type: DataTypes.STRING
+            },
+            currentTurnNumber: { // Hur många gånger man just nu kastat om tärningen
+                type: DataTypes.INTEGER
+            },
+            isPickingScore: { // Om användaren just nu håller på att välja sin poäng.
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: false
             }
         }
     )
@@ -94,7 +101,7 @@ export default function defineModels(sequelize) {
     Game.hasMany(Player, {as: "players"})
     Player.belongsToMany(Game, { through: "GamePlayers", as: "games"}) // En spelare kan vara med i flera spel
     // Definiera relationer angående tärningar
-    Game.hasMany(Dice, {as: "dices"}) // Varje kast har flera tärningar
+    Game.hasMany(Dice, {as: "dices"}) // Varje spel har flera tärningar
     Dice.belongsTo(Game)
     // Definiera relationer angående poäng
     Player.hasMany(Score, {as: "scores"}) // Varje spelare har poäng

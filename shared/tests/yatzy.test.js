@@ -1,4 +1,4 @@
-const { possibleDiceStates } = require("../gameStateCalculations")
+const { possibleDiceStates } = require("../gameStateCalculations.cjs")
 const { randomNumber, randomNumberExcept } = require("./utils")
 
 test("Testar att funktionen för yatzy fungerar", () => {

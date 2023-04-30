@@ -3,15 +3,35 @@ Visar den enskilda spelarens poäng. */
 import Heading from "../Heading"
 import ScoreBoardBadge from "./ScoreboardBadge"
 import ScoreBoardScore from "./ScoreboardScore"
-import { calculateAllPoints, possibleDiceStates } from "yatzy-shared-code";
+import { calculateAllPoints, possibleDiceStates } from "20alse-yatzy-shared-code";
 
-export default function ScoreBoard({ gameState }) {
+export default function ScoreBoard({ gameState, setGameState, player }) {
     let scoreElements = [] // Rendera element för varje poäng
+    // Hitta aktuell spelare
+    let currentPlayerPoints = null
+    for (const gamePlayer of gameState.players){
+        if (gamePlayer.name === gameState.currentPlayerName){
+            currentPlayerPoints = gamePlayer.points
+        }
+    }
+    // Kolla om vi just nu väljer poäng.
+    let isPickingScore = (player.name === gameState.currentPlayerName && gameState.isPickingScore)
     for (const scoreId of Object.keys(possibleDiceStates)) {
-        let score = 5 // TODO: Hämta poäng från gameState här.
-        const title = possibleDiceStates[scoreId].information.title // Hämta namnet på poängen
+        // Hämta poäng från gameState här.
+        let claimedPoints = {} // Skapa mapping: poängtyp --> antalet poäng
+        for (const currentPlayerPoint in currentPlayerPoints){
+            claimedPoints[currentPlayerPoint.scoreType] = currentPlayerPoint.points
+        }
+        let score = claimedPoints[scoreId] !== undefined ? claimedPoints[scoreId]: 0
+        const title = possibleDiceStates[scoreId].information.name // Hämta namnet på poängen
         scoreElements.push(
-            <ScoreBoardScore title={title} score={score} />
+            <ScoreBoardScore title={title} score={score} pickMode={
+                isPickingScore && claimedPoints[scoreId] === undefined
+            }
+         onPick={()=>{
+             console.log("TODO: Implementera!")
+         }}
+            hasBeenPicked={claimedPoints[scoreId]}/>
         )
     }
     return <div className="p-3">

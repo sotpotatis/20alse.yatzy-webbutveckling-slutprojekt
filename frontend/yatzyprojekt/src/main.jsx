@@ -7,7 +7,7 @@ import './index.css'
 import GameLobby from './routes/GameLobby'
 import Index from './routes/Index'
 import Root from "./routes/Root"
-import Game from './routes/Game'
+import Game from './routes/GamePage.jsx'
 import ErrorPage from './routes/ErrorPage'
 // Här defineras de olika undersidorna på hemsidan
 const router = createBrowserRouter([{ // Startsida på hemsidan

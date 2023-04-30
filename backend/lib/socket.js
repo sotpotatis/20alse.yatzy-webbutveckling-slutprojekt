@@ -4,7 +4,7 @@ för multiplayer och för att spara poäng. */
 
 
 import {nanoid} from "nanoid";
-import { calculateAllPoints, possibleDiceStates } from "yatzy-shared-code";
+import { calculateAllPoints, possibleDiceStates } from "20alse-yatzy-shared-code"
 function generateWebsocketResponse(status, data) {
     if (data === null) {
         data = {}
@@ -42,7 +42,7 @@ function generateErrorResponse(errorMessage, data = null) {
  */
 function findGameById(models, requestedgameCode, include, callback) {
     models.Game.findAll({
-        where: { gameCode: requestedgameCode },
+        where: { gameCode: requestedgameCode.toString() },
         include: include
     }).then((data)=>{
         console.log(`Tog emot data om spel:`, data)
@@ -65,7 +65,7 @@ function findGameById(models, requestedgameCode, include, callback) {
  * @param {string} playerName Den spelkoden för spelet som efterfrågas.
  * @param {Array} include Extra information att inkludera från modellen. Till exempel följande för att inkludera poängen
 för spelaren [{
-    model: models.Scpre,
+    model: models.Score,
     as: "scores"
 }]
 @param {function} callback En callback-funktion som exekveras när spelare har hittats.
@@ -178,27 +178,32 @@ function generatePlayerName(models, callback){
  * En statusuppdatering kan skickas till exempel när en ny spelare går med.
  * @param {object} models Sequelize-modeller, se argumenten till funktionen socketHandler.
  * @param {string} requestedGameCode Den spelkoden för spelet som efterfrågas.
- * @param socket
+ * @param socket Socket-objekt för att skicka meddelanden.
+ * @param individual true om meddelandet endast ska skickas till den som efterfrågat det. false om det ska skickas till alla
+ * anslutna spelare.
  */
-function sendGameStateUpdate(models, requestedGameCode, socket){
+function sendGameStateUpdate(models, requestedGameCode, socket, individual=false){
     findGameById(models, requestedGameCode, [{
         model: models.Player,
         as: "players",
     }, {
-        model: models.Round,
-        as: "rounds",
+        model: models.Dice,
+        as: "dices",
     }],
         (game)=>{
+        const sendTo = (socket)=>{ // Hämtar den socket som en information ska skickas till
+            return !individual ?  socket.to(requestedGameCode.toString()): socket
+        }
         if (game !== null){
-            console.log(`Skickar speluppdatering för spel ${game.gameCode}...`)
-            socket.to(requestedGameCode.toString()).emit("gameUpdate", generateSuccessResponse({
+            console.log(`Skickar speluppdatering för spel ${game.gameCode} till ${individual ? `avsändaren av meddelandet`: `alla`}...`)
+            sendTo(socket).emit("gameUpdate", generateSuccessResponse({
                 gameData: game
             }))
             console.log("Meddelande skickat.")
         }
         else {
             console.warn("Oväntat: spelet som efterfrågade en uppdatering verkar inte existera.")
-            socket.to(requestedGameCode.toString()).emit("gameUpdate", generateErrorResponse("Spelet verkar inte längre existera."))
+            sendTo(socket).emit("gameUpdate", generateErrorResponse("Spelet verkar inte längre existera."))
         }
         })
 }
@@ -206,7 +211,7 @@ function sendGameStateUpdate(models, requestedGameCode, socket){
  * Funktion som lägger till hanterare för alla meddelanden som skickas till socket-servern.
  * Denna funktion hanterar alltså saker såsom skapandet av nya spel, uppdaterande av spelstatus etc.
  * @param {object} socket Ett socket-objekt som fås när en Socket.IO-uppkoppling-skapas
- * @param {object} models Åtkosmt till att hantera samt komma åt Sequelize-modeller (sequelize.models) som innehåller samt definierar speldata.
+ * @param {object} models Åtkomst till att hantera samt komma åt Sequelize-modeller (sequelize.models) som innehåller samt definierar speldata.
  */
 const socketHandlers = {
     "createGame": (message, socket, models) => { // createGame --> efterfrågan om att skapa ett spel
@@ -214,14 +219,45 @@ const socketHandlers = {
         const game = models.Game.build()
         game.save().then(()=>{
             console.log("Ett spel skapades!", game)
-        // Skicka information till den som skapade spelet om dess ID
-        socket.emit("createGame", generateSuccessResponse({
-            gameCode: game.gameCode
-        }))
-        console.log("...och information om det är ute i världsrymden!")
-        }).catch((exception)=>{
-            console.warn(`Ett fel inträffade när ett spel skapades: ${exception}`)
-            socket.emit("createGame", generateErrorResponse("Internt serverfel."))
+            console.log("Skapar tärningar...")
+            // Skapa - och lägg till - 5st tärningar
+            let dicesAdded = 0
+            for (let i=0;i<5;i++){
+                const onDiceAddError = (error)=>{
+                    console.warn(`Ett fel inträffade när en tärning skulle läggas till: ${error}.`)
+                    socket.emit("createGame", generateErrorResponse("Internt serverfel."))
+                }
+                models.Dice.create({
+                    number: 1,
+                    saved: false
+                }).then((dice)=>{
+                    game.addDice(dice).then(()=>{
+                    console.log("En tärning lades till.")
+                    dicesAdded += 1
+                }).catch(onDiceAddError)
+                }).catch(onDiceAddError)
+            let timeElapsed = 0 // Timer för att vänta på tärningsuppdateringar
+            let interval = setInterval(()=>{
+                if (dicesAdded === 5){
+                    console.log("Spelet har skapats!")
+                    // Skicka information till den som skapade spelet om dess ID
+                    socket.emit("createGame", generateSuccessResponse({
+                        gameCode: game.gameCode
+                    }))
+                    console.log("...och information om det är ute i världsrymden!")
+                    clearInterval(interval)
+                }
+                else if(timeElapsed > 20) {
+                    console.warn(
+                        "Timeout på att skapa tärningar uppnåddes."
+                    )
+                    socket.emit("createGame", generateErrorResponse("Internt serverfel: en timeout nåddes när databasen försökte kontaktas. Var vänlig försök igen lite senare."))
+                    clearInterval(interval)
+                }
+                timeElapsed += 0.1
+            }, 100)
+
+        }
         })
 
     },
@@ -313,6 +349,27 @@ const socketHandlers = {
         }
 
     },
+    "getMe": (message, socket, models)=>{ // getMe --> skickar information om den aktuella spelaren.
+        console.log("Tog emot en förfrågan om att hämta aktuell spelare.")
+        if (socket.handshake.auth.token !== undefined){
+                console.log("Autentisering specificerades i uppkopplingen.")
+        // Validera autentisiering
+        validatePlayerAuthorization(models, socket.handshake.auth.token, ([validAuthentication, player])=>{
+            if (!validAuthentication){
+                console.warn(`Uppkoppling till servern med en tidigare token tilläts inte. Skickar fel...`)
+                socket.emit("getMe", generateErrorResponse("Ett fel inträffade vid autentisering till servern. Testa att rensa dina cookies!"))
+            }
+            else {
+                console.log("Efterfrågad spelare hittades...")
+                socket.emit("getMe", generateSuccessResponse({you: player}))
+            }
+        })
+    }
+        else {
+            socket.emit("getMe", generateErrorResponse("Denna funktion är endast tillgänglig för autentiserade användare."))
+        }
+
+        },
     "gameInfo": (message, socket, models) => { // gameInfo --> hämta information om ett spel
         console.log("Skickar information om ett spel från servern...")
         const requestedgameCode = message.gameCode
@@ -335,34 +392,7 @@ const socketHandlers = {
         })
     },
     "disconnect": (message, socket, models)=>{
-        console.log("En klient kopplade bort från servern. Kollar om användaren är med i något aktivt spel.")
-        // Sök efter spelare kopplat till klienten. Ta bort spelaren från ett aktivt spel ifall den är med där.
-        models.Player.findAll(
-            {
-                where: {playerId: socket.id},
-                include: [{
-                  model: models.Game,
-                  as: "games"
-                }]
-            }
-        ).then((playerResult)=>{
-            if (playerResult !== null && playerResult.length > 0){
-                const player = playerResult[0] // Hämta den hittade spelaren
-                console.log(`Spelaren är med i ${player.games.length} spel.`)
-                for (const game of player.games){
-                    game.removePlayer(player).then(()=>{
-                        console.log("Tog bort en spelare från ett spel.")
-                        sendGameStateUpdate(models, game.gameCode.toString(), socket) // Uppdatera spelet om detta
-                    })
-                }
-            }
-            else {
-                console.warn(`Hittade ingen spelare med ID: ${socket.id}.`)
-            }
-
-        }).catch((error)=>{
-            console.warn(`Misslyckades med att ta bort en nedkopplad spelare från ett spel ${error}.`)
-        })
+        console.log(`En klient (${socket.id}) kopplade bort från servern.`)
     },
     "startGame": (message, socket, models)=>{ // Starta ett spel
         console.log("Tog emot en förfrågan om att starta ett spel!")
@@ -381,14 +411,15 @@ const socketHandlers = {
             }
             // Om vi kommer hit finns spelet. Kolla att det inte är startat
             if (game.started) {
+                console.log("Spelet är redan startat.")
                 socket.emit("startGame", generateErrorResponse("Spelet är redan startat."))
             }
             // Om vi kommer hit är allting redo så att säga!
             game.started = true
             game.save().then(()=>{
                 console.log("Spelet har startats. Meddelar alla anslutna...")
-                socket.to(game.gameCode.toString()).emit("startGame", generateSuccessResponse({
-                    gameStarted: true
+                socket.emit("startGame", generateSuccessResponse({})) // Meddelar den som försökt starta spelet
+                socket.to(game.gameCode.toString()).emit("gameStarted", generateSuccessResponse({
                 }))
                 // NU är det dags att börja köra själva spelet. Vi börjar alltså här.
                 // Skapa lite hjälpfunktioner
@@ -572,7 +603,7 @@ const socketHandlers = {
                 }
                 
                 // Dags att börja spela!
-                const runGame = runGameRound(() => { // Skapa en rekursiv funktion som kör spelet.
+                const runGame = (() => { // Skapa en rekursiv funktion som kör spelet.
                     if (detectGameEnd()) {
                         console.log("Spelet är slut!")
                         // Uppdatera att spelet tagit slut.
@@ -591,12 +622,32 @@ const socketHandlers = {
                 })
 
             }).catch((error)=>{
-                console.warn(`Ett fel inträffade när spelet skulle startas: ${e}`)
+                console.warn(`Ett fel inträffade när spelet skulle startas: ${error}`)
                 socket.emit("startGame", generateErrorResponse("Ett internt serverfel inträffade. Testa att komma tillbaka lite senare."))
             })
         }
-        
         )
+    },
+    "getGameState": (message, socket, models) => { // getGameState: efterfråga status av det aktuella spelet.
+        console.log("Tog emot en förfrågan att hämta status för ett spel!")
+        if (message.gameCode === undefined){
+            socket.emit("getGameState", generateErrorResponse("Var vänlig att inkludera en spelkod i ditt meddelande."))
+            return
+        }
+        const requestedGameCode = message.gameCode // Hämta spelkod från meddelande
+        findGameById(models, requestedGameCode, [], (game)=>{
+            // Steg 1: validera att spelet verkligen existerar
+            if (game === null){
+                console.log(`Ett efterfrågat spel verkar inte finnas!`)
+                socket.emit("getGameState", generateErrorResponse("Spelet du efterfrågar verkar inte existera."))
+            }
+            else {
+                console.log(`Skickar spelstatus för spel ${requestedGameCode}...`)
+                socket.join(requestedGameCode.toString()) // Se till att användaren är med i rummet för spelstatus
+                sendGameStateUpdate(models, requestedGameCode, socket, true)
+            }
+        })
+
     }
 }
 /**

@@ -18,9 +18,9 @@ export default function Heading({size, children, icon}) {
     let childrenElements = Children.toArray(children)
     // Lägg till en ikon om den är definierad.
     if (icon) {
-        childrenElements.push(<Icon icon={icon}/>)
+        childrenElements.splice(0, 0, <Icon icon={icon}/>) // Lägg till en ikon som första element.
         // Dessa klasser krävs för att hålla ikon och text på samma rad
-        headingClasses += "flex flex-row"
+        headingClasses += " flex flex-row"
     }
     return React.createElement( // Skapa ett element som matchar med den storlek som vi har valt
         `h${size}`,

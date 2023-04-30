@@ -385,7 +385,7 @@ const possibleDiceStates = {
         },
         givesMoreThanZeroPoints: (dices) => {
             // Yatzy fås om alla elementen i arrayen är lika.
-          return countNumberInArray(dices, dices[0]) == dices.length  
+          return countNumberInArray(dices, dices[0]) === dices.length
         },
         calculatePoints: (dices) => {
             return calculateDiceStatePoints(
@@ -411,4 +411,5 @@ function calculateAllPoints(dices) {
     }
     return points
 }
-module.exports = { possibleDiceStates, calculateAllPoints };
+exports.possibleDiceStates = possibleDiceStates
+exports.calculateAllPoints = calculateAllPoints

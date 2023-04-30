@@ -1,7 +1,7 @@
 /* flertal.test.js
 Testar att funktioner relaterade till flertal fungerar.
 */
-const { possibleDiceStates } = require("../gameStateCalculations")
+const { possibleDiceStates } = require("../gameStateCalculations.cjs")
 const { randomNumberExcept } = require("./utils")
 const functionsToTest = [
     "ettor",

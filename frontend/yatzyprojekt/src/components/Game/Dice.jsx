@@ -16,7 +16,7 @@ const numberToDiceImage = { // Mappings: tärning --> bild
     "5": dice5Image,
     "6": dice6Image
 }
-export default function Dice({ activeSide, isLocked }) {
+export default function Dice({ activeSide, isLocked, onLocked }) {
     const diceImage = numberToDiceImage[activeSide.toString()] // Hämta bild som ska användas
     let dice = <img src={diceImage} className="w-auto" alt={`Tärning som visar siffran ${activeSide}.`} />
     let children = [
@@ -28,7 +28,9 @@ export default function Dice({ activeSide, isLocked }) {
         children.push(<p className="text-sky-400 z-10 relative left-3/4 bottom-[2em] bg-gray-600 rounded-full border-4 border-sky-400 max-w-min p-1 flex items-center">
         <Icon className="text-3xl" icon="material-symbols:lock"/></p>)
     }
-    return <div>
+    return <div onClick={!isLocked ?
+        onLocked: null
+    }>
         {children}
     </div>
 

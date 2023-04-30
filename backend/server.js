@@ -44,8 +44,9 @@ sequelize.authenticate().then(()=>{
     console.log("Ett fel inträffade vid uppkoppling till databasen: ", error)
 })
 // Lägg till {force: true} i sync() nedan om du vill rensa databasen eller har uppdaterat modeller.
+// Du kan även använda {alter: true} om force inte fungerar eller du vill alternera modellerna.
 sequelize.sync().then(() => {
-    console.log("Databasensynkronisering klar.")
+    console.log("Databassynkronisering klar.")
     // Starta nu servern som klienter kan koppla upp mot.
     // Servern använder teknologin WebSockets och biblioteket Socket.io
     const httpServer = createServer()

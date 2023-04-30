@@ -1,7 +1,7 @@
 /* par.test.js
 Testar att funktionerna för par och fungerar.
  */
-const { possibleDiceStates } = require("../gameStateCalculations")
+const { possibleDiceStates } = require("../gameStateCalculations.cjs")
 const { randomNumber, randomNumberExcept } = require("./utils")
 test("Testar att funktionen för triss fungerar", () => {
     const number = randomNumber(1, 6) // Genererar numret som ska förekomma i par

@@ -1,2 +1,0 @@
-/* exempelrundor.js
-Inkluderar några  */

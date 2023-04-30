@@ -14,6 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "20alse-yatzy-shared-code": "^1.0.4",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "mysql2": "^3.2.0",

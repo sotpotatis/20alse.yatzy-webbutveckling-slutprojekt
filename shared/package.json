@@ -1,15 +1,27 @@
 {
   "name": "20alse-yatzy-shared-code",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "description": "Calculation code for Albin Seijmer's yatzy project.",
-  "main": "gameClasses.js",
-  "scripts": {
-    "test": "npx jest"
+  "exports": {
+    ".": {
+      "import": "./gameStateCalculations.mjs",
+      "require": "./gameStateCalculations.cjs"
+    }
   },
+  "scripts": {
+    "test": "npx jest",
+    "build": "npx to-esm gameStateCalculations.cjs"
+  },
+  "files": [
+    "./gameStateCalculations.cjs",
+    "./gameStateCalculations.mjs"
+  ],
   "author": "20alse",
   "license": "ISC",
   "dependencies": {
-    "install": "^0.13.0",
-    "jest": "^29.5.0"
+    "install": "^0.13.0"
+  },
+  "devDependencies": {
+        "jest": "^29.5.0"
   }
 }
