@@ -10,9 +10,10 @@ function randomNumber(start,end){
     return ~~(Math.random() * (end-start+1)) + start// (~~ är snabbare än Math.floor, se https://stackoverflow.com/a/50189413)
 }
 export default class LocalGameStateHandler {
-    constructor(setGameState, setCurrentPlayer){
+    constructor(setGameState, setCurrentPlayer, setTentativePoints){
         this.setGameState = setGameState
         this.setCurrentPlayer = setCurrentPlayer
+        this.setTentativePoints = setTentativePoints
         // JavaScript har ju den roliga saken att för att komma åt this i varje funktion
         // måste man ha kört .bind(this) i funktionen...
         // Här gör jag det lite enklare för mig att hålla koll på saker och ting
@@ -108,6 +109,8 @@ export default class LocalGameStateHandler {
         }
         const points = calculateAllPoints(diceNumbers)
         console.log("Beräknade poäng", points)
+        this.setTentativePoints(points)
+        this.announceNewGameState(gameState)
     }
     onReRollButtonClick(gameState) {
         if (gameState.currentTurnNumber <= 3){ // Kolla så att användaren får kasta tärningar

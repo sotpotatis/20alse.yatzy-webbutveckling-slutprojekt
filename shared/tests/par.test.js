@@ -9,9 +9,9 @@ test("Testar att funktionen för par fungerar", () => {
         [
             number,
             number,
-            randomNumberExcept(1, 6, number),
-            randomNumberExcept(1, 6, number),
-            randomNumberExcept(1, 6, number)
+            randomNumberExcept(1, 6, [number]),
+            randomNumberExcept(1, 6, [number]),
+            randomNumberExcept(1, 6, [number])
         ]
     )).toBe(number*2)
 })
@@ -19,7 +19,7 @@ test("Testar att funktionen för två par fungerar", () => {
     // Genererar numrena som ska förekomma i par
     const number1 = randomNumber(1, 6)
     const number2 = randomNumberExcept(1, 6, number1)
-    expect(possibleDiceStates.par.calculatePoints(
+    expect(possibleDiceStates.två_par.calculatePoints(
         [
             number1,
             number2,

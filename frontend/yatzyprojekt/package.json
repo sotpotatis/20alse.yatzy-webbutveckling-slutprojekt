@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@iconify/react": "^4.1.0",
-    "20alse-yatzy-shared-code": "^1.0.4",
+    "20alse-yatzy-shared-code": "^1.0.6",
     "autoprefixer": "^10.4.14",
     "postcss": "^8.4.21",
     "react": "^18.2.0",

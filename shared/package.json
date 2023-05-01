@@ -1,6 +1,6 @@
 {
   "name": "20alse-yatzy-shared-code",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "description": "Calculation code for Albin Seijmer's yatzy project.",
   "exports": {
     ".": {

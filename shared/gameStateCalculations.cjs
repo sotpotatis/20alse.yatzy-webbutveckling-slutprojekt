@@ -67,11 +67,11 @@ function calculatePairs(dices) {
  */
 function calculateDiceStatePoints(stateInformation, dices, calculationFunction) {
     // Kolla om funktionen returnerar fler än 0 poäng
-    if (!stateInformation.givesMoreThanZeroPoints(dices)) {
-        return countNumberInArray(dices, 1) // Returnera poäng
+    if (stateInformation.givesMoreThanZeroPoints(dices)) {
+        return calculationFunction(dices) // Returnera poäng
     }
     else {
-        return calculationFunction(dices)
+        return 0
     }
 }
 /**
@@ -329,7 +329,7 @@ const possibleDiceStates = {
             const numberCounts = countNumbersInArray(dices)
             const foundNumbers = Object.keys(numberCounts)
             if (foundNumbers.length === 5) { // Steg 1: 5 unika nummer.
-                return (!foundNumbers.includes(6)) // Steg 2: Inkluderar inte 6.
+                return (!foundNumbers.includes("6")) // Steg 2: Inkluderar inte 6.
             }
         },
         calculatePoints: (dices) => {
@@ -350,9 +350,9 @@ const possibleDiceStates = {
         givesMoreThanZeroPoints: (dices) => {
             // Vi ska ha 2, 3, 4, 5 och 6.
             const numberCounts = countNumbersInArray(dices)
-            const foundNumbers = Object.keys(numberCounts.length)
+            const foundNumbers = Object.keys(numberCounts)
             if (foundNumbers.length === 5) { // Steg 1: 5 unika nummer.
-                return (!foundNumbers.includes(1)) // Steg 2: Inkluderar inte 1.
+                return (!foundNumbers.includes("1")) // Steg 2: Inkluderar inte 1.
             }
         },
         calculatePoints: (dices) => {
@@ -384,7 +384,7 @@ const possibleDiceStates = {
             pointsInformation: "Yatzy ger alltid 50 poäng."
         },
         givesMoreThanZeroPoints: (dices) => {
-            // Yatzy fås om alla elementen i arrayen är lika.
+         // Yatzy fås om alla elementen i arrayen är lika.
           return countNumberInArray(dices, dices[0]) === dices.length
         },
         calculatePoints: (dices) => {

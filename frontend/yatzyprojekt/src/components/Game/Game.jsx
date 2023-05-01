@@ -22,8 +22,9 @@ export default function Game() {
     const gameMode = searchParams.get("mode") || "local"
     const [currentGameState, setCurrentGameState] = useState(null)
     const [player, setPlayer] = useState(null) // Information om den användaren som spelar spelet.
+    const [tentativePoints, setTentativePoints] = useState(null) // Spara preliminära poäng
     const [localGameStateHandler, setLocalGameStateHandler] = useState(gameMode !== "multiplayer" ?
-    new LocalGameStateHandler(setCurrentGameState, setPlayer): null) // Initiera en hanterare för spelstatus om vi använder ett lokalt spel.
+    new LocalGameStateHandler(setCurrentGameState, setPlayer, setTentativePoints): null) // Initiera en hanterare för spelstatus om vi använder ett lokalt spel.
     // Spåra om saker och ting laddas
     const [isLoading, setLoading] = useState(false) // Vi behöver ladda lite saker om vi har multiplayer
     // Spåra felmeddelande
@@ -96,18 +97,34 @@ export default function Game() {
         // Funktioner är olika baserade på om användaren spelar i enspelarläge eller flerspelarläge
         let doneFunction = null
         let reRollFunction = null
+        let scorePickingFunction = null
         if (gameMode === "multiplayer"){
             // TODO implementera
         }
         else {
             reRollFunction = ()=>{
                 localGameStateHandler.onReRollButtonClick({...currentGameState})
-                if (currentGameState.currentTurnNumber >= 3){
-                    doneFunction()
-                }
             }
             doneFunction = ()=>{
                 localGameStateHandler.onDoneButtonClick({...currentGameState})
+            }
+            scorePickingFunction = (scoreId) => {
+                console.log(`Plockar poäng "${scoreId}"...`)
+                let newGameState = {...currentGameState}
+                 // Hitta den aktuella spelaren och uppdatera dens poäng
+                 for (let i=0;i<currentGameState.players.length;i++){
+                     const player = currentGameState.players[i]
+                     if (player.name === currentGameState.currentPlayerName){
+                         const score = {
+                             scoreType: scoreId,
+                             points: tentativePoints[scoreId].value
+                         }
+                         newGameState.players[i].scores.push(score)
+                     }
+                 }
+                 newGameState.isPickingScore = false
+                 setCurrentGameState(newGameState)
+                    localGameStateHandler.prepareGameForNextPlayer(currentGameState, player)
             }
         }
         children.push(<div className="grid grid-cols-5 w-screen h-screen">
@@ -122,7 +139,8 @@ export default function Game() {
             }
             onReRollButtonClick={reRollFunction}
             onDoneButtonClick={doneFunction}/>
-        <ScoreBoardWrapper gameState={currentGameState} setGameState={setCurrentGameState} player={player}/>
+            <ScoreBoardWrapper gameState={currentGameState} setGameState={setCurrentGameState} isMultiplayer={gameMode === "multiplayer"} player={player}
+            tentativePoints={tentativePoints} onScorePick={scorePickingFunction}/>
     </div>)
     }
     return children
