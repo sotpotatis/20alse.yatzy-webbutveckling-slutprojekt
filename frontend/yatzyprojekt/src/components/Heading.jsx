@@ -13,7 +13,7 @@ const sizeClasses = {
     6: ""
 }
 const commonClasses = "font-bold"
-export default function Heading({size, children, icon}) {
+export default function Heading({size, children, icon, additionalClasses}) {
     let headingClasses = sizeClasses[size]
     let childrenElements = Children.toArray(children)
     // Lägg till en ikon om den är definierad.
@@ -25,7 +25,7 @@ export default function Heading({size, children, icon}) {
     return React.createElement( // Skapa ett element som matchar med den storlek som vi har valt
         `h${size}`,
         {
-            className: headingClasses + " " + commonClasses
+            className: headingClasses + " " + commonClasses + (additionalClasses !== undefined ? ` ${additionalClasses}` : "")
         },
         childrenElements
     )

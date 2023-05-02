@@ -42,7 +42,7 @@ export default function ScoreBoard({ gameState, setGameState, player, isMultipla
             <Heading size={2}>{gameState.currentPlayerName}'s poäng</Heading>
             <ScoreBoardBadge size="big" points={currentPlayerTotalPoints} isPickable={false} />
         </div>
-        <div key="scoreboard-body" className="grid grid-cols-1 md:grid-cols-2 md:grid-flow-col grid-rows-6">
+        <div key="scoreboard-body" className="grid grid-cols-1 xl:grid-cols-2 xl:grid-flow-col grid-rows-5">
             {scoreElements}
         </div>
     </div>

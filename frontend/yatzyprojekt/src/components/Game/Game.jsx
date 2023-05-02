@@ -20,6 +20,10 @@ export default function Game() {
     // Om spelet är i multiplayerläge eller inte sätts med URL-parametern ?mode. Hämta detta nedan.
     const [searchParams, setSearchParams] = useSearchParams()
     const gameMode = searchParams.get("mode") || "local"
+    // Om vi är i multiplayerläge så kommer vi att ha spelets ID som en URL-parameter.
+    const gameCode = searchParams.get("gameCode") || null
+    // Antalet spelare kan sättas via URL:en om vi kör singleplayer.
+    const numberOfPlayers = gameMode === "local" ? (searchParams.get("numberOfPlayers") || 2): null
     const [currentGameState, setCurrentGameState] = useState(null)
     const [player, setPlayer] = useState(null) // Information om den användaren som spelar spelet.
     const [tentativePoints, setTentativePoints] = useState(null) // Spara preliminära poäng
@@ -29,14 +33,6 @@ export default function Game() {
     const [isLoading, setLoading] = useState(false) // Vi behöver ladda lite saker om vi har multiplayer
     // Spåra felmeddelande
     const [errorMessage, setErrorMessage] = useState(null)
-    // Om vi är i multiplayerläge så kommer vi att ha spelets ID som en URL-parameter.
-    const gameCode = searchParams.get("gameCode") || null
-    if (gameMode === "multiplayer" && gameCode === null) { // Validera URL-parametrar.
-        return <ErrorContainer message="Du har inte angivit ett spel-ID. Om du inte skrivit in länken manuellt, kontakta hemsidesadministratören."/>
-    }
-    else if (gameMode !== "local" && gameMode !== "multiplayer") {
-        return <ErrorContainer message="Du har inte angivit ett spel-ID. Om du inte skrivit in länken manuellt, kontakta hemsidesadministratören."/>
-    }
     const [connectionPending, setConnectionPending] = useState(gameMode === "multiplayer" && !socket.connected)
     const checkIsConnected = () => {setConnectionPending(!socket.connected)}
     useEffect(()=> {
@@ -45,6 +41,16 @@ export default function Game() {
         }
         // Kolla efter uppkoppling 2 gånger per sekund
     })
+    // Validera URL-parametrar.
+    if (gameMode === "multiplayer" && gameCode === null) {
+        return <ErrorContainer message="Du har inte angivit ett spel-ID. Om du inte skrivit in länken manuellt, kontakta hemsidesadministratören."/>
+    }
+    else if (gameMode !== "local" && gameMode !== "multiplayer") {
+        return <ErrorContainer message="Du har inte angivit ett spel-ID. Om du inte skrivit in länken manuellt, kontakta hemsidesadministratören."/>
+    }
+    else if (gameMode === "local" && (Number.isNaN(numberOfPlayers) || numberOfPlayers < 2 || numberOfPlayers > 8)){
+        return <ErrorContainer message="Du har angivit ett otillåtet antal spelare (tillåtet intervall: mellan 2 och 8 spelare) Om du inte skrivit in länken manuellt, kontakta hemsidesadministratören."/>
+    }
     if ((currentGameState === null || player === null) && (!connectionPending || gameMode !== "multiplayer")){ // Detta händer vid spelet start: då ska vi hämta spelstatus
         if (gameMode === "multiplayer"){ // Multiplayer: status ska hämtas från servern
             console.log("Prenumererar på event för multiplayer...")
@@ -77,7 +83,7 @@ export default function Game() {
         }
         else {
             console.log("Skapar ursprunglig status för enspelarläge...")
-            localGameStateHandler.createInitialGameState(2)
+            localGameStateHandler.createInitialGameState(numberOfPlayers)
         }
     }
     // Rendera nu all information
@@ -127,7 +133,7 @@ export default function Game() {
                     localGameStateHandler.prepareGameForNextPlayer(currentGameState, player)
             }
         }
-        children.push(<div className="grid grid-cols-1 md:grid-cols-5 w-screen h-screen">
+        children.push(<div className="grid grid-cols-1 lg:grid-cols-5 w-screen h-screen">
             <DiceWrapper diceStates={currentGameState.dices}
             gameState={currentGameState}
              setGameState={setCurrentGameState}

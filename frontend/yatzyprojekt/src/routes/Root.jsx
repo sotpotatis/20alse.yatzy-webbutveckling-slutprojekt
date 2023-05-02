@@ -1,9 +1,11 @@
 /* Root.jsx
-Renderar saker som finns på alla sidor. */
+Renderar saker som finns på alla sidor.
+En "layout"-komponent kan man kalla det! */
 import { Outlet } from "react-router-dom"
-import { useState } from "react"
 import { useCookies } from "react-cookie";
 import SettingsButton from "../components/Settings/SettingsButton";
+import {useEffect} from "react";
+import {Helmet} from "react-helmet";
 export default function Root() {
     // Hämta typsnitt och tema (inställningsbart av användaren)
     const [cookies, setCookies] = useCookies(["selectedTheme", "selectedFont"])
@@ -26,7 +28,10 @@ export default function Root() {
     const fontClass = selectedFont === "main" ? "font-main" : "font-dyslexic"
     return <main
         className={`${[themeClass, fontClass].join(" ")} h-screen w-screen max-h-full max-w-full bg-background`}
-    >
+        >
+        <Helmet>
+            <title>20alse's Yatzy!</title>
+        </Helmet>
         <Outlet />
         <SettingsButton/>
     </main>

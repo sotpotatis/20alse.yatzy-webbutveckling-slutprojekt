@@ -8,7 +8,7 @@ import dice3Image from "../../assets/dice-3.png";
 import dice4Image from "../../assets/dice-4.png";
 import dice5Image from "../../assets/dice-5.png";
 import dice6Image from "../../assets/dice-6.png";
-const numberToDiceImage = { // Mappings: tärning --> bild
+export const numberToDiceImage = { // Mappings: tärning --> bild
     "1": dice1Image,
     "2": dice2Image,
     "3": dice3Image,

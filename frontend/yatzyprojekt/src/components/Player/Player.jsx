@@ -26,7 +26,7 @@ function PlayerCard({ name, score, isMe, isCurrentTurn }) {
     </div>
   );
 }
-function PlayerCompact({ name, score, isMe, isCurrentTurn }) {
+function PlayerCompact({ name, index, score, isMe, isCurrentTurn }) {
   // Vi vill ha fyra delar med info:
   // 1: avataren
   // 2: användarens poäng
@@ -34,7 +34,7 @@ function PlayerCompact({ name, score, isMe, isCurrentTurn }) {
   // 4: om användaren just nu kastar tärniningar
   let nameElements = [<Heading size={3}>{name}</Heading>,
     <ScoreBoardBadge points={score} />]
-  // Lägg till information spelaren är "du" (den som använder sidan eller inte)
+  // Lägg till information om spelaren är "du" (den som använder sidan eller inte)
   if (isMe) {
     nameElements.push(
       <Badge color="green" text="Du"/>
@@ -43,6 +43,7 @@ function PlayerCompact({ name, score, isMe, isCurrentTurn }) {
   // Indikera ifall det är den aktuella spelarens tur
   return (
       <>
+      <a name={`player-${index}`}/>
       <div className={`flex flex-row flex-wrap p-3 rounded-lg` + (isCurrentTurn ? " bg-green-600 text-white": " text-black")}>
         <Avatar playerName={name}/>
         <div className="p-3 flex flex-row gap-x-3">
@@ -53,7 +54,7 @@ function PlayerCompact({ name, score, isMe, isCurrentTurn }) {
         </>
   );
 }
-export default function Player({ name, score, type, isMe, isCurrentTurn }) {
+export default function Player({ name, index, score, type, isMe, isCurrentTurn }) {
   // Returnera den komponent som efterfrågas
   if (type === "card") {
     return <PlayerCard name={name} score={score} isMe={isMe} isCurrentTurn={isCurrentTurn} />;

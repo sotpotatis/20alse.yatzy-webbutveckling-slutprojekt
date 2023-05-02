@@ -1,7 +1,8 @@
 import Button from "../Button"
-import Dice from "./Dice"
+import Dice, {numberToDiceImage} from "./Dice"
 import Heading from "../Heading.jsx";
 import {useState} from "react";
+import {Helmet} from "react-helmet";
 
 /* DiceWrapper.jsx
 Renderar en "behållare" som innehåller tärningar. */
@@ -50,8 +51,21 @@ export default function DiceWrapper({ gameState, setGameState, isClaimedBy, onRe
             }/>
         )
     }
+    // Då alla tärningar laddas som bilder vill vi undvika scenariot att det blir en fördröjning när man kastat tärningar
+    // och mellan att bilden uppdateras. Detta gör jag genom att lägga in osynliga element på varje tärning som gör att användarens
+    // webbläsare laddar in de. Detta görs med "preload"-attributet för länkar.
+    let silentDices = []
+    for (let diceNumber=1;diceNumber<=6;diceNumber++){
+        silentDices.push(
+            <link rel="preload" href={numberToDiceImage[diceNumber.toString()]} as="image"/>
+        )
+    }
     // Lägg till alla tärningar
-    children.push(<div className={`col-span-3 py-12 px-8 text-white`} key="dices-page">
+    children.push(
+        <div className={`col-span-3 py-12 px-8 text-white`} key="dices-page">
+        <Helmet>
+            {silentDices}
+        </Helmet>
         <div key="dices-wrapper" className="grid grid-cols-3 md:grid-cols-5 gap-x-12">
             {dices}
         </div>
