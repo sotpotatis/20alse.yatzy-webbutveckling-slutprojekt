@@ -8,7 +8,7 @@ export default function ScoreBoardScore({title, points, pickMode, hasBeenPicked,
     if (pickMode){ // Om användaren ska välja poäng i scoreboarden
         conditionalClasses += !hasBeenPicked ? "" : " hover:cursor-not-allowed"
     }
-    return <div key={`score-title`} className={`flex flex-row justify-between border-b-2 px-3 py-3 border-gray-200 text-center gap-x-2 ${conditionalClasses}`}>
+    return <div key={`score-title`} className={`flex flex-row justify-between border-b-2 px-3 py-3 border-gray-200 text-center items-center gap-x-2 ${conditionalClasses}`}>
         <Heading size={4}>{title}</Heading>
         <ScoreBoardBadge points={points} picked={hasBeenPicked} picking={pickMode} onClick={onPick} isPickable={true}/>
     </div>

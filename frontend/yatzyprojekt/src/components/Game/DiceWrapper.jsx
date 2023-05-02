@@ -52,7 +52,7 @@ export default function DiceWrapper({ gameState, setGameState, isClaimedBy, onRe
     }
     // Lägg till alla tärningar
     children.push(<div className={`col-span-3 py-12 px-8 text-white`} key="dices-page">
-        <div key="dices-wrapper" className="grid grid-cols-5 gap-x-12">
+        <div key="dices-wrapper" className="grid grid-cols-3 md:grid-cols-5 gap-x-12">
             {dices}
         </div>
         <div key="buttons" className="flex flex-row gap-x-12 pt-12 w-full justify-center">

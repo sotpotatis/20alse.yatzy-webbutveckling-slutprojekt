@@ -11,9 +11,8 @@ export default function ScoreBoard({ gameState, setGameState, player, isMultipla
     let currentPlayerPoints = {} // Skapa mapping: poängtyp --> antalet poäng
     let currentPlayerTotalPoints = 0
     for (const gamePlayer of gameState.players){
-        //...och beräkna dennes poäng!...
+        //...och beräkna dennes totalpoäng!...
         if (gamePlayer.name === gameState.currentPlayerName){
-            console.log(gamePlayer)
             for (const score of gamePlayer.scores){
                 currentPlayerPoints[score.scoreType] = score.points
                 currentPlayerTotalPoints += score.points
@@ -25,7 +24,7 @@ export default function ScoreBoard({ gameState, setGameState, player, isMultipla
     for (const scoreId of Object.keys(possibleDiceStates)) {
         // Hämta poäng från gameState här.
         const hasBeenClaimed = currentPlayerPoints[scoreId] !== undefined
-        let score = hasBeenClaimed ? currentPlayerPoints[scoreId]: 0
+        let score = hasBeenClaimed ? currentPlayerPoints[scoreId]: (gameState.isPickingScore ? tentativePoints[scoreId].value : 0)
         const title = possibleDiceStates[scoreId].information.name // Hämta namnet på poängen
         scoreElements.push(
             <ScoreBoardScore title={title} points={score} pickMode={
@@ -40,10 +39,10 @@ export default function ScoreBoard({ gameState, setGameState, player, isMultipla
     }
     return <div className="p-3">
         <div key="scoreboard-heading" className="flex flex-row gap-x-4">
-            <Heading size={2}>Dina poäng</Heading>
+            <Heading size={2}>{gameState.currentPlayerName}'s poäng</Heading>
             <ScoreBoardBadge size="big" points={currentPlayerTotalPoints} isPickable={false} />
         </div>
-        <div key="scoreboard-body" className="grid grid-cols-2 grid-flow-col grid-rows-6">
+        <div key="scoreboard-body" className="grid grid-cols-1 md:grid-cols-2 md:grid-flow-col grid-rows-6">
             {scoreElements}
         </div>
     </div>
