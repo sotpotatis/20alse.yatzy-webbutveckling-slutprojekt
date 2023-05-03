@@ -40,6 +40,10 @@ ___
 
 **Tester:** Användartester för att testa det ursprungliga gränsnittet.
 
+**Planerad tidsåtgång:** 1,5 vecka
+
+**Faktisk tidsåtgång:** 1,5 vecka
+
 ___
 
 ## Iteration 4
@@ -48,6 +52,9 @@ ___
 
 **Tester:** Användartester för att fråga användarna som testat om vad de tycker om förändringarna samt eventuellt några fler användartester.
 
+**Planerad tidsåtgång:** 0,5 vecka
+
+**Faktisk tidsåtgång:** 2 dagar
 ___
 
 ## Iteration 5
@@ -55,3 +62,7 @@ ___
 **Vad ska göras:** Bufferiteration där appens slutgiltiga version kodas. De sista problemen och visuella fixarna implementeras.
 
 **Tester:** Användartester om nödvändigt.
+
+**Planerad tidsåtgång:** 0,5 vecka
+
+**Faktisk tidsåtgång:** --
