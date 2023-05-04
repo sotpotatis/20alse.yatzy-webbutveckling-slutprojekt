@@ -42,8 +42,8 @@ export default class LocalGameStateHandler {
     }
     generateDice(){
          return {
-                    number: randomNumber(1, 6),
-                    saved: false
+            number: randomNumber(1, 6),
+            saved: false
         }
     }
     generateDices(){
@@ -90,11 +90,17 @@ export default class LocalGameStateHandler {
             dices: [],
             players: players,
             started: true,
-            currentTurnNumber: 1,
+            currentTurnNumber: 0,
             isPickingScore: false
         }
-        // Lägg till tärningar
-        gameState.dices = this.generateDices()
+        // Rensa tärningar
+        gameState.dices = [
+        {saved: false, number: "empty"},
+        {saved: false, number: "empty"},
+        {saved: false, number: "empty"},
+        {saved: false, number: "empty"},
+        {saved: false, number: "empty"}
+        ]
         console.log("Skapat ursprunglig spelstatus: ", gameState)
         this.announceNewGameState(gameState)
         this.announceNewCurrentPlayer(players[0])

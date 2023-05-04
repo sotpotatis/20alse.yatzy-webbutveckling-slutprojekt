@@ -4,7 +4,25 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title></title>
+    <title>20alse's Yatzy!</title>
+    <!-- Länkar till favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
+    <link rel="manifest" href="/site.webmanifest"/>
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#6b7280"/>
+    <meta name="msapplication-TileColor" content="#2b5797"/>
+    <meta name="theme-color" content="#ffffff"/>
+    <!-- Då alla tärningar laddas som bilder vill vi undvika scenariot att det blir en fördröjning när man kastat tärningar
+    och mellan att bilden uppdateras. Detta gör jag genom att lägga in osynliga element på varje tärning som gör att användarens
+    webbläsare laddar in de. Detta görs med "preload"-attributet för länkar. -->
+    <link rel="preload" href="/dice-1.png" as="image"/>
+    <link rel="preload" href="/dice-2.png" as="image"/>
+    <link rel="preload" href="/dice-3.png" as="image"/>
+    <link rel="preload" href="/dice-4.png" as="image"/>
+    <link rel="preload" href="/dice-5.png" as="image"/>
+    <link rel="preload" href="/dice-6.png" as="image"/>
+    <link rel="preload" href="/dice-empty.png" as="image"/>
   </head>
   <body>
     <div id="root"></div>

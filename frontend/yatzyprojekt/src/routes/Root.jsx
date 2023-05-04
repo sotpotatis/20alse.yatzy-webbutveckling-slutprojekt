@@ -5,7 +5,6 @@ import { Outlet } from "react-router-dom"
 import { useCookies } from "react-cookie";
 import SettingsButton from "../components/Settings/SettingsButton";
 import {useEffect} from "react";
-import {Helmet} from "react-helmet";
 export default function Root() {
     // Hämta typsnitt och tema (inställningsbart av användaren)
     const [cookies, setCookies] = useCookies(["selectedTheme", "selectedFont"])
@@ -29,16 +28,6 @@ export default function Root() {
     return <main
         className={`${[themeClass, fontClass].join(" ")} h-screen w-screen max-h-full max-w-full bg-background`}
         >
-        <Helmet>
-            <title>20alse's Yatzy!</title>
-            <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
-            <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
-            <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
-            <link rel="manifest" href="/site.webmanifest"/>
-            <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#6b7280"/>
-            <meta name="msapplication-TileColor" content="#2b5797"/>
-            <meta name="theme-color" content="#ffffff"/>
-        </Helmet>
         <Outlet />
         <SettingsButton/>
     </main>

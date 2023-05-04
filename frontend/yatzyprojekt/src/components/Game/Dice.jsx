@@ -2,22 +2,9 @@
 Renderar en tärning. */
 // Importera tärningsbilder
 import { Icon } from "@iconify/react";
-import dice1Image from "../../assets/dice-1.png";
-import dice2Image from "../../assets/dice-2.png";
-import dice3Image from "../../assets/dice-3.png";
-import dice4Image from "../../assets/dice-4.png";
-import dice5Image from "../../assets/dice-5.png";
-import dice6Image from "../../assets/dice-6.png";
-export const numberToDiceImage = { // Mappings: tärning --> bild
-    "1": dice1Image,
-    "2": dice2Image,
-    "3": dice3Image,
-    "4": dice4Image,
-    "5": dice5Image,
-    "6": dice6Image
-}
+
 export default function Dice({ activeSide, isLocked, isUnlockable, onLocked }) {
-    const diceImage = numberToDiceImage[activeSide.toString()] // Hämta bild som ska användas
+    const diceImage = `/dice-${activeSide.toString()}.png`// Hämta bild som ska användas
     let dice = <img src={diceImage} className="w-auto" alt={`Tärning som visar siffran ${activeSide}.`} />
     let children = [
         <div className={`p-2 bg-white ring-8 rounded-[1em] overflow-clip ` + (isLocked ? "ring-sky-400 hover:cursor-not-allowed hover:opacity-80" : "ring-gray-200 hover:cursor-pointer")}>

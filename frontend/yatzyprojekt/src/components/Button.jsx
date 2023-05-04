@@ -3,13 +3,13 @@ Filnamnet säger det mesta! En knapp. Som man kan klicka på.
 Med stöd för lite olika färger och annat gott! */
 import {Icon} from "@iconify/react"
 const colors = { // Definera färgerna på ram och bakgrund för olika knappar
-    blue: "border-blue-700 bg-blue-600 text-black",
+    blue: "border-blue-700 bg-blue-600 text-white",
     lightBlue: "border-blue-300 bg-sky-400 text-black",
     green: "border-green-400 bg-green-500 text-black",
     lightGreen: "border-green-400 bg-emerald-400 text-black",
     gray: "border-gray-400 bg-slate-400 text-black",
     lightGray: "border-gray-200 bg-slate-200 text-black",
-    link: "text-gray-500 hover:underline border-black",
+    link: "text-gray-500 underline border-0",
     red: "border-red-300 bg-red-400 text-black",
 }
 export default function Button({ text, onClick, color, additionalClasses, icon, type, disabled, title, circle }) {
