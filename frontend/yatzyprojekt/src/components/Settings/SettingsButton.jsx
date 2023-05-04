@@ -10,7 +10,7 @@ export default function SettingsButton(props){
     const [menuExpanded, setMenuExpanded] = useState(false)
     // Hämta cookies relaterade till font
     const [cookies, setCookies] = useCookies(["selectedTheme", "selectedFont"])
-    let children = [<div key="settingsButton" role={"button"} className="absolute static text-white bg-blue-400 shadow-lg max-w-min right-0 bottom-0 p-4 m-12 rounded-full text-3xl z-30"
+    let children = [<div key="settingsButton" role={"button"} className="absolute static text-white bg-blue-400 shadow-lg max-w-min right-0 bottom-0 p-4 m-12 rounded-full text-3xl z-30" aria-label="Inställningsknapp"
         onClick={() => { setMenuExpanded(!menuExpanded) }}>
         <Icon icon="material-symbols:settings"/>
     </div>]

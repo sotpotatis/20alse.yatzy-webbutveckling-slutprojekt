@@ -13,8 +13,13 @@ const sizeClasses = {
     6: ""
 }
 const commonClasses = "font-bold"
-export default function Heading({size, children, icon, additionalClasses}) {
+export default function Heading({size, level, children, icon, additionalClasses}) {
     let headingClasses = sizeClasses[size]
+    // En titel kan ha en storlek men en annan hierarkisk nivå.
+    // Detta är för att både kunna uppnå WCAG-riktlinjer men ha den textstorlek jag vill ha.
+    // Avgör nedan vilket taggnummer som ska användas.
+    const htmlTagToUse = level === null ? size: level
+    // Lägg till element som ska vara inuti rubriken
     let childrenElements = Children.toArray(children)
     // Lägg till en ikon om den är definierad.
     if (icon) {
@@ -23,10 +28,13 @@ export default function Heading({size, children, icon, additionalClasses}) {
         headingClasses += " flex flex-row"
     }
     return React.createElement( // Skapa ett element som matchar med den storlek som vi har valt
-        `h${size}`,
+        `h${htmlTagToUse}`,
         {
             className: headingClasses + " " + commonClasses + (additionalClasses !== undefined ? ` ${additionalClasses}` : "")
         },
         childrenElements
     )
+}
+Heading.defaultProps = {
+    level: null
 }

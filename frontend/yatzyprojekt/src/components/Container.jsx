@@ -20,7 +20,7 @@ export default function Container({title, children, classes, align, icon,
             <CloseButton onClose={onClose} className="ml-auto"/>
         </span>
     }
-    let titleElement = <Heading size={2} icon={icon}>{title}</Heading>
+    let titleElement = <Heading size={2} level={1} icon={icon}>{title}</Heading>
     // Lägg in ikon om en sådan finns
     return <div className={`flex flex-col shrink-0 bg-white max-w-full max-h-full ${width} ${height} overflow-scroll border-gray-200 border-2 rounded-lg ${additionalClasses}`}>
         <div className={"sticky top-0 bg-white w-full p-12 pb-0"} key="container-title">
