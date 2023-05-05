@@ -11,8 +11,9 @@ export default function ScoreBoardWrapper({gameState, setGameState, player, isMu
     if (isCollapsed) {
         children.push(<div className="col-span-2 bg-white border-4 ml-3 border-gray-200 p-3 h-min lg:h-screen rounded-lg z-20 flex flex-col overflow-hidden">
             <ScoreBoard tentativePoints={tentativePoints} gameState={gameState} setGameState={setGameState} player={player} isMultiplayer={isMultiplayer} onScorePick={onScorePick}/>
+            <ScoreBoard tentativePoints={tentativePoints} gameState={gameState} setGameState={setGameState} player={player} isMultiplayer={isMultiplayer} onScorePick={onScorePick} isMobile={true}/>
             <Heading size={2} additionalClasses="pl-3">Spelare</Heading>
-            <PlayerWrapper players={gameState.players} currentPlayerName={gameState.currentPlayerName} playerName={player.name}/>
+            <PlayerWrapper players={gameState.players} currentPlayerName={gameState.currentPlayerName} playerName={player.name} />
     </div>)
     }
     return <>{children}</>

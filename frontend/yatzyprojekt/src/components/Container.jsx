@@ -21,12 +21,14 @@ export default function Container({title, children, classes, align, icon,
         </span>
     }
     let titleElement = <Heading size={2} level={1} icon={icon}>{title}</Heading>
+    // Om titeln är null så visas ingen titel.
+    let titlePart = title !== null ? <div className={"sticky top-0 bg-white w-full p-12 pb-0"} key="container-title">
+    {titleElement}
+    <hr className="w-full border-gray-300 mt-4"/>
+    </div>  : null
     // Lägg in ikon om en sådan finns
     return <div className={`flex flex-col shrink-0 bg-white max-w-full max-h-full ${width} ${height} overflow-scroll border-gray-200 border-2 rounded-lg ${additionalClasses}`}>
-        <div className={"sticky top-0 bg-white w-full p-12 pb-0"} key="container-title">
-        {titleElement}
-        <hr className="w-full border-gray-300 mt-4"/>
-        </div>
+        {titlePart}
         <div key="container-children" className="flex flex-col p-12 gap-y-4 justify-center items-center">
           {children}
         </div>

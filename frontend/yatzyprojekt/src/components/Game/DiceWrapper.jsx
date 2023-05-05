@@ -62,7 +62,7 @@ export default function DiceWrapper({ gameState, setGameState, isClaimedBy, onRe
             <Button color="green" text="Slå" icon="ooui:reload" onClick={onReRollButtonClick}
             disabled={gameState.isPickingScore || gameState.currentTurnNumber >= 3}/>
             <Button color="red" text="Avsluta" icon="majesticons:close-line" onClick={onDoneButtonClick}
-            disabled={gameState.isPickingScore}/>
+            disabled={gameState.isPickingScore || gameState.currentTurnNumber === 0}/>
         </div></div>)
     // Om isClaimedBy.isMe är false kan inte användarens webbläsare klicka på tärningarna eftersom någon annan
     // håller på att rulla de. Detta används för multiplayer-läget.

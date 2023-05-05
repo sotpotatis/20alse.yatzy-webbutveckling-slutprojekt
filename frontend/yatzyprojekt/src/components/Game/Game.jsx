@@ -133,7 +133,7 @@ export default function Game() {
                     localGameStateHandler.prepareGameForNextPlayer(currentGameState, player)
             }
         }
-        children.push(<div className="grid grid-cols-1 lg:grid-cols-5 w-screen h-screen">
+        children.push(<div className="grid grid-cols-1 lg:grid-cols-5 w-screen">
             <DiceWrapper diceStates={currentGameState.dices}
             gameState={currentGameState}
              setGameState={setCurrentGameState}

@@ -26,7 +26,7 @@ export default function Root() {
     const themeClass = selectedTheme === "dark" ? "dark" : ""
     const fontClass = selectedFont === "main" ? "font-main" : "font-dyslexic"
     return <main
-        className={`${[themeClass, fontClass].join(" ")} h-screen w-screen max-h-full max-w-full bg-background`}
+        className={`${[themeClass, fontClass].join(" ")} bg-background`}
         >
         <Outlet />
         <SettingsButton/>

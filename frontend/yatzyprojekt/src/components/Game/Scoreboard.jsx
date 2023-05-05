@@ -4,8 +4,9 @@ import Heading from "../Heading"
 import ScoreBoardBadge from "./ScoreboardBadge"
 import ScoreBoardScore from "./ScoreboardScore"
 import { calculateAllPoints, possibleDiceStates } from "20alse-yatzy-shared-code";
+import Container from "../Container";
 
-export default function ScoreBoard({ gameState, setGameState, player, isMultiplayer, tentativePoints, onScorePick}) {
+export default function ScoreBoard({ gameState, setGameState, player, isMultiplayer, tentativePoints, onScorePick, isMobile}) {
     let scoreElements = [] // Rendera element för varje poäng
     // Hitta aktuell spelare
     let currentPlayerPoints = {} // Skapa mapping: poängtyp --> antalet poäng
@@ -37,13 +38,24 @@ export default function ScoreBoard({ gameState, setGameState, player, isMultipla
             />
         )
     }
-    return <div className="p-3 lg:p-0 m-12 lg:m-0 h-screen top-0 lg:h-auto lg:block bg-white lg:bg-none border-2 lg:border-0 h-2/3 lg:h-auto rounded-lg lg:rounded-0 top-0 left-0 lg:right-0 w-screen lg:w-auto">
-        <div key="scoreboard-heading" className="flex flex-row gap-x-4">
-            <Heading size={2}>{gameState.currentPlayerName}'s poäng</Heading>
-            <ScoreBoardBadge size="big" points={currentPlayerTotalPoints} isPickable={false} />
+    let children = (<><div key="scoreboard-heading" className="flex flex-row gap-x-4">
+                <Heading size={2}>{gameState.currentPlayerName}'s poäng</Heading>
+                <ScoreBoardBadge size="big" points={currentPlayerTotalPoints} isPickable={false} />
+            </div>
+            <div key="scoreboard-body" className="grid grid-cols-2 xl:grid-cols-2 xl:grid-flow-col grid-rows-5">
+                {scoreElements}
+        </div></>)
+    // Rendera olika layout för dator och mobil.
+    if (!isMobile) {
+        return <div className="hidden lg:block">
+            {children}
         </div>
-        <div key="scoreboard-body" className="grid grid-cols-2 xl:grid-cols-2 xl:grid-flow-col grid-rows-5">
-            {scoreElements}
-        </div>
-    </div>
+    }
+    else { // På mobil ska poänglistan bara visas om man väljer poäng.
+        return isPickingScore ? <Container children={children} classes={["visible", "md:hidden", "z-40", "absolute", "top-12", "m-12", "bg-none"]}
+            width="w-auto" height="h-screen" title={null}/> : null
+    }
+}
+ScoreBoard.defaultProps = {
+    isMobile: false
 }
