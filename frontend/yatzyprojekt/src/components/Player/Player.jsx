@@ -32,39 +32,64 @@ function PlayerCompact({ name, index, score, isMe, isCurrentTurn }) {
   // 2: användarens poäng
   // 3: om användaren är du eller inte
   // 4: om användaren just nu kastar tärniningar
-  let nameElements = [<Heading size={3}>{name}</Heading>,
-    <ScoreBoardBadge points={score} />]
+  let nameElements = [
+    <Heading size={3}>{name}</Heading>,
+    <ScoreBoardBadge points={score} />,
+  ];
   // Lägg till information om spelaren är "du" (den som använder sidan eller inte)
   if (isMe) {
-    nameElements.push(
-      <Badge color="green" text="Du"/>
-    )
+    nameElements.push(<Badge color="green" text="Du" />);
   }
   // Indikera ifall det är den aktuella spelarens tur
   return (
-      <>
-      <a name={`player-${index}`}/>
-      <div className={`flex flex-row flex-wrap p-3 rounded-lg` + (isCurrentTurn ? " bg-green-600 text-white": " text-black")}>
-        <Avatar playerName={name}/>
-        <div className="p-3 flex flex-row gap-x-3">
-            {nameElements}
-        </div>
+    <>
+      <a name={`player-${index}`} />
+      <div
+        className={
+          `flex flex-row flex-wrap p-3 rounded-lg` +
+          (isCurrentTurn ? " bg-green-600 text-white" : " text-black")
+        }
+      >
+        <Avatar playerName={name} />
+        <div className="p-3 flex flex-row gap-x-3">{nameElements}</div>
       </div>
-        <hr className="border-2 border-gray-300 my-3" />
-        </>
+      <hr className="border-2 border-gray-300 my-3" />
+    </>
   );
 }
-export default function Player({ name, index, score, type, isMe, isCurrentTurn }) {
+export default function Player({
+  name,
+  index,
+  score,
+  type,
+  isMe,
+  isCurrentTurn,
+}) {
   // Returnera den komponent som efterfrågas
   if (type === "card") {
-    return <PlayerCard name={name} score={score} isMe={isMe} isCurrentTurn={isCurrentTurn} />;
+    return (
+      <PlayerCard
+        name={name}
+        score={score}
+        isMe={isMe}
+        isCurrentTurn={isCurrentTurn}
+      />
+    );
   } else if (type === "compact") {
-    return <PlayerCompact name={name} score={score} isMe={isMe} isCurrentTurn={isCurrentTurn} />;
+    return (
+      <PlayerCompact
+        name={name}
+        score={score}
+        isMe={isMe}
+        index={index}
+        isCurrentTurn={isCurrentTurn}
+      />
+    );
   }
 }
 Player.defaultProps = {
   type: "card",
   score: null,
   isMe: true,
-  isCurrentTurn: true
+  isCurrentTurn: true,
 };

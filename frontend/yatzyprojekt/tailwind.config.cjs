@@ -3,16 +3,18 @@ module.exports = {
   content: ["./src/**/*.{js,jsx,html}"],
   theme: {
     extend: {
-      fontFamily: { // Lägg in anpassade typsnitt
+      fontFamily: {
+        // Lägg in anpassade typsnitt
         main: ["Poppins", "sans-serif"],
-        dyslexic: ["OpenDyslexicRegular", "sans-serif"]
+        dyslexic: ["OpenDyslexicRegular", "sans-serif"],
       },
-      colors: { // Lägg in färger
-        background: "#6B7280"
-      }
+      colors: {
+        // Lägg in färger
+        background: "#6B7280",
+      },
     },
   },
   plugins: [
-    require("tailwindcss-3d")({legacy: true}) // Används för 3D-kuber.
+    require("tailwindcss-3d")({ legacy: true }), // Används för 3D-kuber.
   ],
-}
+};

@@ -45,7 +45,6 @@ function findGameById(models, requestedgameCode, include, callback) {
         where: { gameCode: requestedgameCode.toString() },
         include: include
     }).then((data)=>{
-        console.log(`Tog emot data om spel:`, data)
         if (data.hasOwnProperty("length") && data.length > 0){
             console.log("Skickar vidare första möjliga spel till callback.")
             callback(data[0])
@@ -71,7 +70,9 @@ för spelaren [{
 @param {function} callback En callback-funktion som exekveras när spelare har hittats.
  */
 function findPlayerByName(models, playerName, include, callback) {
-    models.Player.findAll({
+    // Special-attribut: genom att lägga till "secret" i include-listan kan man få användarens hemliga nyckel
+    const scope = include.includes("secret") ? models.Player : models.Player.scope("withSecret")
+    scope.findAll({
         where: { name: playerName },
         include: include
     }).then((data)=>{
@@ -186,10 +187,15 @@ function sendGameStateUpdate(models, requestedGameCode, socket, individual=false
     findGameById(models, requestedGameCode, [{
         model: models.Player,
         as: "players",
+        include: {
+        model: models.Score,
+        as: "scores",
+    }
     }, {
         model: models.Dice,
         as: "dices",
-    }],
+    },
+        ],
         (game)=>{
         const sendTo = (socket)=>{ // Hämtar den socket som en information ska skickas till
             return !individual ?  socket.to(requestedGameCode.toString()): socket
@@ -228,7 +234,7 @@ const socketHandlers = {
                     socket.emit("createGame", generateErrorResponse("Internt serverfel."))
                 }
                 models.Dice.create({
-                    number: 1,
+                    number: "empty",
                     saved: false
                 }).then((dice)=>{
                     game.addDice(dice).then(()=>{
@@ -256,10 +262,8 @@ const socketHandlers = {
                 }
                 timeElapsed += 0.1
             }, 100)
-
         }
         })
-
     },
     "joinGame": (message, socket, models) => { // joinGame --> efterfrågan om att gå med i ett spel
         if (message.action === "newPlayer"){
@@ -353,18 +357,18 @@ const socketHandlers = {
         console.log("Tog emot en förfrågan om att hämta aktuell spelare.")
         if (socket.handshake.auth.token !== undefined){
                 console.log("Autentisering specificerades i uppkopplingen.")
-        // Validera autentisiering
-        validatePlayerAuthorization(models, socket.handshake.auth.token, ([validAuthentication, player])=>{
-            if (!validAuthentication){
-                console.warn(`Uppkoppling till servern med en tidigare token tilläts inte. Skickar fel...`)
-                socket.emit("getMe", generateErrorResponse("Ett fel inträffade vid autentisering till servern. Testa att rensa dina cookies!"))
-            }
-            else {
-                console.log("Efterfrågad spelare hittades...")
-                socket.emit("getMe", generateSuccessResponse({you: player}))
-            }
-        })
-    }
+                // Validera autentisiering
+                validatePlayerAuthorization(models, socket.handshake.auth.token, ([validAuthentication, player])=>{
+                    if (!validAuthentication){
+                        console.warn(`Uppkoppling till servern med en tidigare token tilläts inte. Skickar fel...`)
+                        socket.emit("getMe", generateErrorResponse("Ett fel inträffade vid autentisering till servern. Testa att rensa dina cookies!"))
+                    }
+                    else {
+                        console.log("Efterfrågad spelare hittades...")
+                        socket.emit("getMe", generateSuccessResponse({you: player}))
+                    }
+                })
+        }
         else {
             socket.emit("getMe", generateErrorResponse("Denna funktion är endast tillgänglig för autentiserade användare."))
         }
@@ -399,6 +403,10 @@ const socketHandlers = {
         findGameById(models, message.gameCode, [{
             model: models.Player,
             as: "players",
+            include: {
+                model: models.Score,
+                as: "scores"
+            }
         },
         {
             model: models.Dice,
@@ -431,6 +439,7 @@ const socketHandlers = {
                     console.log("Hittar nästa användare som ska spela...")
                     let currentPlayerIndex = 0
                     for(currentPlayerIndex = 0;currentPlayerIndex<game.players.length;currentPlayerIndex++){
+                        const player = game.players[currentPlayerIndex]
                         if (player.name === game.currentPlayerName){
                             break
                         }
@@ -456,9 +465,9 @@ const socketHandlers = {
                     // men det finns ju alltid något som kan förbättras.
                     for (const dice of dices){
                         const updatedDice = updateFunction(dice) // updateFunction passas som argument och specificerar vad som ska uppdateras på tärningen
-                        updatedDice.update().then(()=>{ // Efter varje tärning uppdaterats, uppdatera nästa tärning.
+                        updatedDice.save().then(()=>{ // Efter varje tärning uppdaterats, uppdatera nästa tärning.
                         numberOfDiceUpdated += 1
-                    })
+                        })
                     }
                     // Vänta tills alla tärningar har uppdaterats och skicka sedan ett uppdaterat "gameState"
                     console.log("Väntar tills alla tärningar har uppdaterats...")
@@ -468,7 +477,6 @@ const socketHandlers = {
                             console.log(`Väntar fortfarande på tärningsuppdateringar...`)
                             if (secondsElapsed > 20){
                                 console.log("Timeout nådd. Skickar felmeddelande.")
-                                generateErrorResponse("Timeout nåddes vid databasuppkoppling. Vänligen försök igen lite senare")
                             }
                         }
                         else {
@@ -484,9 +492,13 @@ const socketHandlers = {
                 function prepareForPlayer(newPlayerName, callback){
                     console.log("Förbereder för en ny spelare...")
                     game.currentPlayerName = newPlayerName // Uppdatera den aktuella spelarens namn.
-                    game.update().then(()=>{
+                    game.currentTurnNumber = 0
+                    game.save().then(()=>{
                         // Återställ varje tärning
-                        waitForDiceUpdate(game.dices, (dice)=>{dice.saved=false;return dice}, ()=>{
+                        waitForDiceUpdate(game.dices, (dice)=>{
+                            dice.saved=false
+                        dice.number="empty"
+                        return dice}, ()=>{
                             console.log("Alla tärningar har uppdaterats och spelet är nu redo för nästa spelare.")
                             callback()
                         })
@@ -499,6 +511,7 @@ const socketHandlers = {
                     console.log("Genererar nummer på tärningarna....")
                     waitForDiceUpdate(game.dices, (dice)=>{
                         dice.number = randomNumber(1, 6)
+                        return dice
                     }, ()=>{
                         console.log("Numret på alla tärningar har uppdaterats.")
                         callback()
@@ -517,7 +530,7 @@ const socketHandlers = {
                         diceNumbers.push(dice.number)
                     }
                     // Kör funktion för att hitta poäng för alla tärningar
-                    const possiblePoints = calculateAllPoints(dices)
+                    const possiblePoints = calculateAllPoints(game.dices)
                     // Kolla att användaren inte har plockat denna poäng innan
                     findPlayerByName(models, game.currentPlayerName, [{model: models.Score, "as": "scores"}], (player)=>{
                         if (player !== null){
@@ -548,30 +561,28 @@ const socketHandlers = {
                 function updateRound(onScorePick){
                     console.log("Väljer ut en användare som ska spela...")
                     const nextPlayer = getNextPlayer()
-                    prepareForPlayer(nextPlayer, ()=>{
+                    console.log(`Nästa spelare: ${nextPlayer.name}.`)
+                    prepareForPlayer(nextPlayer.name, ()=>{
                         console.log("Spelplanen har förberetts.")
-                        // Skicka uppdaterat gameState
-                        console.log("Skickar ett uppdaterat gameState...")
-                        sendGameStateUpdate(models, game.gameCode, socket)
-                        console.log("gameState uppdaterad.")
                         // Lyssna efter förfrågan att kasta tärningar
                         socket.on("diceRoll", (message)=>{
-                            console.log("Tog emot en förfrågan att kasta en tärning. Validerar att den kommer från den aktuella användaren...")
-                            findPlayerByName(models, game.currentPlayerName, [],(player)=>{ // Hitta den aktuella spelaren i spelet
-                                if (player.playerId === socket.id){
-                                    // Kasta tärningarna
-                                    generateDiceNumbers(()=>{
-                                        console.log("Tärningarna har kastats och spelaren har underrättats.")
-                                        sendGameStateUpdate(models, game.gameCode, socket)
-                                    })
-                                }
-                                else {
-                                    console.warn(`Tog emot förfrågan att kasta tärningen från en användare som just nu inte ska få kasta tärningen: ${player.playerId}!=${socket.id}.`)
-                                    // Skicka felmeddelande
-                                    socket.emit("diceRoll", generateErrorResponse("Det är inte din tur. Om du inte har försökt att hacka spelet är det något fel i min kod. Försök igen lite senare."))
-                                }
-
-                        })  
+                            console.log("Tog emot en förfrågan att kasta en tärning.")
+                            generateDiceNumbers(()=>{
+                                    console.log("Tärningarna har kastats och spelaren har underrättats.")
+                                    sendGameStateUpdate(models, game.gameCode, socket)
+                                    socket.emit("diceRoll", generateSuccessResponse({message: "Tärningarna har kastats om."}))
+                            })
+                        })
+                        // Lyssna efter förfrågan att hämta möjlig poäng
+                        socket.on("possibleScores", (message)=>{
+                            console.log("Tog emot en förfrågan att hämta möjliga poäng...")
+                            let diceNumbers = [] // Skapa en lista som endast innehåller tärningarnas nummer
+                            for (const dice of game.dices){
+                                diceNumbers.push(dice.number)
+                            }
+                            socket.emit("possibleScores", generateSuccessResponse({
+                            result: calculateAllPoints(diceNumbers)
+                            }))
                         })
                         // Lyssna efter förfrågan att skriva in sin poäng
                         socket.on("pickScore", (message)=>{
@@ -583,9 +594,23 @@ const socketHandlers = {
                                 return
                             }
                             updateUserScore(message.requestedScoreType, ()=>{
-                                socket.emit("pickScore", {message: "Poängen har uppdaterats"})
+                                socket.emit("pickScore", {message: "Poängen har uppdaterats."})
+                                sendGameStateUpdate(models, game.gameCode.toString(), socket)
+                                onScorePick()
                             })
                         })
+                        // Skicka uppdaterat gameState
+                        console.log("Skickar ett uppdaterat gameState...")
+                        sendGameStateUpdate(models, game.gameCode, socket)
+                        console.log("gameState uppdaterad.")
+                        // Applicera timeout ifall en spelare inte gör något på en minut
+                        const initialPlayerName = game.currentPlayerName
+                        setTimeout(()=>{
+                            if (game.currentPlayerName === initialPlayerName){
+                                console.log("Timeout uppnåddes: en spelare har inte gjort något på en minut. Kör kod")
+                                onScorePick()
+                            }
+                        }, 60000)
                     })
                 }
                 /**
@@ -593,34 +618,38 @@ const socketHandlers = {
                  */
                 function detectGameEnd() {
                     for (const player of game.players) {
-                        for (const score of player.scores) {
-                            if (!score.length === Object.keys(possibleDiceStates).length) { // Om användaren inte plockat alla poäng än
-                                return false // Returnera false.
-                            }
+                        if (player.scores.length !== Object.keys(possibleDiceStates).length) { // Om användaren inte plockat alla poäng än
+                            return false // Returnera false.
                         }
                     }
                     return true // Om vi kommer hit så har spelet tagit slut!
                 }
-                
                 // Dags att börja spela!
                 const runGame = (() => { // Skapa en rekursiv funktion som kör spelet.
+                    const updateInterval = setInterval(()=>{
+                        sendGameStateUpdate(models, game.gameCode, socket) // Skicka uppdaterad gameState.
+                    }, 10000) // Skicka uppdaterad spelstatus till alla klienter var 2.5e sekund.
                     if (detectGameEnd()) {
                         console.log("Spelet är slut!")
                         // Uppdatera att spelet tagit slut.
                         game.completed = true
-                        game.update().then(() => { // Uppdatera i databasen
+                        game.save().then(() => { // Uppdatera i databasen
                             console.log("Spelet har uppdaterats som slut i databasen. Skickar status...")
+                            clearInterval(updateInterval) // Rensa utskick av uppdaterad speldata då det ställs in igen
                             sendGameStateUpdate(models, game.gameCode, socket) // Skicka uppdaterad gameState.
                         })
                     }
                     else {
-                        console.log("Spelet är inte slut. Kör spelrunda igen...")
+                        console.log("Spelet är inte slut. Kör spelrunda...")
                         updateRound(() => {
+                            console.log("Användaren har valt sin poäng. Startar om spel...")
+                            clearInterval(updateInterval) // Rensa utskick av uppdaterad speldata så det inte körs för alltid
                             runGame() // Kör denna funktion igen när användaren har valt sina poäng.
                         })
                     }
                 })
-
+                console.log("Kör spel!")
+                runGame() // Kör spelet
             }).catch((error)=>{
                 console.warn(`Ett fel inträffade när spelet skulle startas: ${error}`)
                 socket.emit("startGame", generateErrorResponse("Ett internt serverfel inträffade. Testa att komma tillbaka lite senare."))

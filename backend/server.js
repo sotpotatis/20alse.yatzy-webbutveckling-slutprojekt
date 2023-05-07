@@ -20,8 +20,8 @@ const SOCKET_SERVER_PORT = parseInt(process.env.SOCKET_SERVER_PORT )|| 3000; // 
 
 assert.ok(DATABASE_SERVER, "Du har inte specificerat en databasserver.");
 assert.ok(DATABASE_NAME, "Du har inte specificerat ett databasnamn.");
-assert.ok(DATABASE_USER_NAME, "Du har inte speccificerat en användarnamn för databasen.");
-assert.ok(DATABASE_USER_PASSWORD, "Du har inte speccificerat ett lösenord för databasen.");
+assert.ok(DATABASE_USER_NAME, "Du har inte specificerat en användarnamn för databasen.");
+assert.ok(DATABASE_USER_PASSWORD, "Du har inte specificerat ett lösenord för databasen.");
 
 // För att koppla upp samt hantera databas använder jag biblioteket och modellhanteraren Sequelize.
 // Här initieras uppkopplingen.

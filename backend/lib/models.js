@@ -34,7 +34,6 @@ export default function defineModels(sequelize) {
             },
             isPickingScore: { // Om användaren just nu håller på att välja sin poäng.
                 type: DataTypes.BOOLEAN,
-                allowNull: false,
                 defaultValue: false
             }
         }
@@ -46,9 +45,23 @@ export default function defineModels(sequelize) {
             allowNull: false
         },
         number: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        }
+            type: DataTypes.STRING,
+            defaultValue: "empty",
+            allowNull: false,
+            // Implementera getter och setter för att tillåta två typer.
+            get(){
+                const value = this.getDataValue("number")
+                return Number.isNaN(value) ? value : Number(value)
+            },
+            set(value){
+                // Validera att värdet är tillåtet
+                if ((typeof value === "string" && value === "empty") || (typeof value === "number" && value >= 1 && value <= 6)){
+                    this.setDataValue("number", value.toString())
+                }
+                else {
+                    throw new Error("Ogiltig data för tärningens siffra.")
+                }
+        }}
     })
     // Score refererar till en poäng man kan få, till exempel stege, tvåtal, tretal
     const Score = sequelize.define("Score", {
