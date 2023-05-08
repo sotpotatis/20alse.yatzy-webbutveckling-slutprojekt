@@ -26,14 +26,30 @@ function PlayerCard({ name, score, isMe, isCurrentTurn }) {
     </div>
   );
 }
-function PlayerCompact({ name, index, score, isMe, isCurrentTurn }) {
+function PlayerCompact({ name, index, score, isMe, isCurrentTurn, numbered, number }) {
   // Vi vill ha fyra delar med info:
   // 1: avataren
   // 2: användarens poäng
   // 3: om användaren är du eller inte
   // 4: om användaren just nu kastar tärniningar
+  // Rendera olika rubriker beroende på om "numbered" är true eller false
+  const indexToColor = (playerIndex) => { // Visa guld, silver och bronsfärger för topp 3. Körs endast om numbered är true.
+    if (playerIndex <= 3) {
+      return [
+        "bg-gold",
+        "bg-silver",
+        "bg-bronze",
+      ][playerIndex]
+    }
+    else {
+      return "bg-gray-500" // Standardfärg om användaren inte är i "topp"
+    }
+  }
+  let headingChildren = !numbered ? name : [<span className={`rounded-lg px-2 mx-2 text-2xl font-bolder h-min  ${indexToColor(number-1)}`} >
+    <i>{number}</i>
+  </span>, name]
   let nameElements = [
-    <Heading size={3}>{name}</Heading>,
+    <Heading size={3}>{headingChildren}</Heading>,
     <ScoreBoardBadge points={score} />,
   ];
   // Lägg till information om spelaren är "du" (den som använder sidan eller inte)
@@ -64,6 +80,8 @@ export default function Player({
   type,
   isMe,
   isCurrentTurn,
+  numbered,
+  number
 }) {
   // Returnera den komponent som efterfrågas
   if (type === "card") {
@@ -83,6 +101,8 @@ export default function Player({
         isMe={isMe}
         index={index}
         isCurrentTurn={isCurrentTurn}
+        numbered={numbered}
+        number={number}
       />
     );
   }
@@ -90,6 +110,7 @@ export default function Player({
 Player.defaultProps = {
   type: "card",
   score: null,
-  isMe: true,
+  isMe: false,
   isCurrentTurn: true,
+  numbered: false
 };

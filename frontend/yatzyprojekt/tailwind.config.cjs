@@ -11,6 +11,9 @@ module.exports = {
       colors: {
         // Lägg in färger
         background: "#6B7280",
+        gold: "#FFD700",
+        silver: "#C0C0C0",
+        bronze: "#CD7F32",
       },
     },
   },

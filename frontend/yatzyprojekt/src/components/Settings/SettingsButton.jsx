@@ -31,7 +31,7 @@ export default function SettingsButton(props) {
       aria-label="Inställningsknapp"
       onClick={onSettingsButtonClick}
     >
-      <div className="flex flex-row gap-x-2 w-min text-sm mx-auto text-white md:hidden bg-blue-400 p-2 rounded-full">
+      <div className="flex flex-row gap-x-2 w-min text-sm mx-auto text-black md:hidden bg-blue-400 p-2 rounded-full">
         <Icon icon="material-symbols:settings" />
         <p>Inställningar</p>
       </div>

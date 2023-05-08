@@ -159,6 +159,9 @@ export default class LocalGameStateHandler {
       gameState.currentTurnNumber += 1;
       console.log("Tärningar har kastats om.");
       this.announceNewGameState(gameState);
+      if (gameState.currentTurnNumber === 3) {
+        this.onDoneButtonClick(gameState)
+      }
     }
   }
   checkWin(gameState) {
@@ -167,7 +170,7 @@ export default class LocalGameStateHandler {
       // Om denna lista är full för alla användare har spelaren vunnit spelet.
       if (
         !(
-          Object.keys(player.scores.length) ===
+          player.scores.length ===
           Object.keys(possibleDiceStates).length
         )
       ) {

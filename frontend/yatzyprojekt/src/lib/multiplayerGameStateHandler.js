@@ -18,9 +18,9 @@ export default class MultiplayerGameStateHandler {
     this.setLoading = setLoading;
     const functions = [
       "errorHandler",
-        "rollDices",
-        "onDoneButtonClick",
-        "onScorePick"
+      "rollDices",
+      "onDoneButtonClick",
+      "onScorePick",
     ];
     bindFunctions(functions, this); // Binda alla funktioner, se kommentar i bindFunctions för mer info
   }
@@ -42,14 +42,17 @@ export default class MultiplayerGameStateHandler {
   }
   rollDices(socket) {
     console.log("Skickar meddelade om att kasta tärningar...");
-    socket.on("diceRoll", (response)=>{
-    this.errorHandler(response, ()=>{
-      console.log("Tog emot uppdaterad tärningsstatus från servern", response)
-      this.setLoading(false)
-    })
+    socket.on("diceRoll", (response) => {
+      this.errorHandler(response, () => {
+        console.log(
+          "Tog emot uppdaterad tärningsstatus från servern",
+          response
+        );
+        this.setLoading(false);
+      });
     });
-    socket.emit("diceRoll")
-    this.setLoading(true)
+    socket.emit("diceRoll");
+    this.setLoading(true);
   }
   onDoneButtonClick(gameState, socket) {
     console.log("Hämtar möjliga poäng...");

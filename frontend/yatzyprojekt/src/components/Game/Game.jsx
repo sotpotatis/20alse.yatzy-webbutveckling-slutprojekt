@@ -13,6 +13,7 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 import { SocketContext } from "../../context/socket.js";
 import LocalGameStateHandler from "../../lib/localGameStateHandler.js";
 import MultiplayerGameStateHandler from "../../lib/multiplayerGameStateHandler.js";
+import WinScreen from "./WinScreen";
 /* GamePage.jsx
 Innehåller själva spelet. */
 export default function Game() {
@@ -137,8 +138,13 @@ export default function Game() {
     children.push(
       <LoadingSpinner text={"Kontaktar servern..."} fullPage={true} />
     );
-  } else {
-    console.log("Renderar spelstatus...");
+  }
+  else if (currentGameState.completed) { // Om spelets har avslutats
+    console.log("Spelet har avslutats. Visar resultatskärm...")
+      children.push(<WinScreen gameState={currentGameState} player={player} />)
+ } // Om vi fortfarande ska köra spelet
+  else {
+    console.log("Renderar spel...");
     // Skapa lite funktioner för när man klickar på olika knappar.
     // Funktioner är olika baserade på om användaren spelar i enspelarläge eller flerspelarläge
     let doneFunction = null;
