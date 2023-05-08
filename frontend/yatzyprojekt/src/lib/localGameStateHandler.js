@@ -46,6 +46,7 @@ export default class LocalGameStateHandler {
       "createInitialGameState",
       "onDoneButtonClick",
       "onReRollButtonClick",
+      "onDiceLocked",
       "checkWin",
       "onScoreClaim",
     ];
@@ -163,6 +164,17 @@ export default class LocalGameStateHandler {
         this.onDoneButtonClick(gameState)
       }
     }
+  }
+  onDiceLocked(gameState, diceIndex){
+    if (!gameState.dices[diceIndex].saved) {
+        console.log(`Låser tärningsstatus för tärning ${diceIndex}...`);
+        gameState.dices[i].saved = true;
+      } else {
+        console.log(`Låser upp tärningsstatus för tärning ${diceIndex}...`);
+        gameState.dices[i].saved = false;
+      }
+      this.setGameState(gameState);
+      console.log("Tärning låst.");
   }
   checkWin(gameState) {
     for (const player of gameState.players) {

@@ -30,11 +30,11 @@ export default function Game() {
   // Antalet spelare kan sättas via URL:en om vi kör singleplayer.
   const numberOfPlayers =
     gameMode === "local" ? searchParams.get("numberOfPlayers") || 2 : null;
-  const [currentGameState, setCurrentGameState] = useState(null);
-  const [player, setPlayer] = useState(null); // Information om den användaren som spelar spelet.
   const [tentativePoints, setTentativePoints] = useState(null); // Spara preliminära poäng
   // Spåra om saker och ting laddas
   const [isLoading, setLoading] = useState(false); // Vi behöver ladda lite saker om vi har multiplayer
+  const [currentGameState, setCurrentGameState] = useState(null);
+  const [player, setPlayer] = useState(null); // Information om den användaren som spelar spelet.
   // Spåra felmeddelande
   const [errorMessage, setErrorMessage] = useState(null);
   const [connectionPending, setConnectionPending] = useState(
@@ -48,6 +48,8 @@ export default function Game() {
     if (gameMode === "multiplayer") {
       if (connectionPending){
         setInterval(checkIsConnected, 500);
+        setCurrentGameState(null)
+        setPlayer(null)
       }
     }
   }, []);
@@ -139,6 +141,11 @@ export default function Game() {
       <LoadingSpinner text={"Kontaktar servern..."} fullPage={true} />
     );
   }
+  else if (currentGameState.initialized !== undefined && !currentGameState.initialized){ // initialized används av servern
+    children.push(
+      <LoadingSpinner text={"Väntar på att servern ska starta spelet..."} fullPage={true} />
+    );
+  }
   else if (currentGameState.completed) { // Om spelets har avslutats
     console.log("Spelet har avslutats. Visar resultatskärm...")
       children.push(<WinScreen gameState={currentGameState} player={player} />)
@@ -150,17 +157,21 @@ export default function Game() {
     let doneFunction = null;
     let reRollFunction = null;
     let scorePickingFunction = null;
+    let lockFunction = null;
     if (gameMode === "multiplayer") {
       reRollFunction = () => {
-        gameStateHandler.rollDices(socket);
+        gameStateHandler.rollDices({...currentGameState}, socket);
       };
       doneFunction = () => {
-        gameStateHandler.onDoneButtonClick(gameStateHandler, socket);
+        gameStateHandler.onDoneButtonClick({...currentGameState}, socket);
       };
       scorePickingFunction = (scoreId) => {
         console.log(`Plockar poäng ${scoreId}`);
-        gameStateHandler.onScorePick(scoreId, socket)
+        gameStateHandler.onScorePick({...currentGameState},scoreId, socket)
       };
+      lockFunction = (diceIndex) => {
+      gameStateHandler.onDiceLocked({...currentGameState}, diceIndex, socket)
+    };
     } else {
       reRollFunction = () => {
         gameStateHandler.onReRollButtonClick({ ...currentGameState });
@@ -168,6 +179,8 @@ export default function Game() {
       doneFunction = () => {
         gameStateHandler.onDoneButtonClick({ ...currentGameState });
       };
+            lockFunction = (diceIndex) => {
+      gameStateHandler.onDiceLocked({...currentGameState}, diceIndex)}
       scorePickingFunction = (scoreId) => {
         console.log(`Plockar poäng "${scoreId}"...`);
         let newGameState = { ...currentGameState };
@@ -199,6 +212,7 @@ export default function Game() {
           }}
           onReRollButtonClick={reRollFunction}
           onDoneButtonClick={doneFunction}
+          onDiceLocked={lockFunction}
         />
         <ScoreBoardWrapper
           gameState={currentGameState}

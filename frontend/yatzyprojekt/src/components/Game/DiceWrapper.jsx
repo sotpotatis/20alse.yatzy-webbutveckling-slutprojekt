@@ -12,51 +12,21 @@ export default function DiceWrapper({
   isClaimedBy,
   onReRollButtonClick,
   onDoneButtonClick,
+    onDiceLocked
 }) {
-  // Vi vill låta användaren kunna låsa upp låsta tärningar ifall tärningen låstes under den aktuella rundan.
-  // Därför håller vi koll på när tärningarna låstes.
-  const [dicesLockedThisRound, setDicesLockedThisRound] = useState({
-    dices: [],
-    turnNumber: gameState.turnNumber,
-  });
   let children = [];
   // Generera element för varje tärning
   let dices = [];
   for (let i = 0; i < gameState.dices.length; i++) {
     const diceData = gameState.dices[i];
     const isLocked = diceData.saved;
-    const isUnlockable = dicesLockedThisRound.dices.includes(i);
     // Skapa en funktion för när användaren låser tärningen
-    const onLocked = () => {
-      let newGameState = { ...gameState };
-      let newDicesLockedThisRound = { ...dicesLockedThisRound };
-      if (!isLocked) {
-        console.log(`Låser tärningsstatus för tärning ${i}...`);
-        newDicesLockedThisRound.dices.push(i);
-        setDicesLockedThisRound(newDicesLockedThisRound);
-        newGameState.dices[i].saved = true;
-      } else if (isUnlockable) {
-        console.log(`Låser upp tärningsstatus för tärning ${i}...`);
-        newDicesLockedThisRound.dices.splice(
-          newDicesLockedThisRound.dices.indexOf(i),
-          1
-        );
-        setDicesLockedThisRound(newDicesLockedThisRound);
-        newGameState.dices[i].saved = false;
-      } else {
-        console.log(`Går inte att låsa upp tärning ${i}.`);
-      }
-
-      setGameState(newGameState);
-      console.log("Tärning låst.");
-    };
     dices.push(
       <Dice
         key={`dice-${i}`}
         activeSide={diceData.number}
         isLocked={isLocked}
-        isUnlockable={isUnlockable}
-        onLocked={onLocked}
+        onLocked={()=>{onDiceLocked(i)}}
       />
     );
   }

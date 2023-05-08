@@ -39,7 +39,7 @@ export default function ScoreBoard({
     let score = hasBeenClaimed
       ? currentPlayerPoints[scoreId]
       : gameState.isPickingScore
-      ? tentativePoints[scoreId].value
+      ? (tentativePoints !== null && Object.keys(tentativePoints).includes(scoreId) ? tentativePoints[scoreId].value: "?")
       : 0;
     const title = possibleDiceStates[scoreId].information.name; // Hämta namnet på poängen
     scoreElements.push(

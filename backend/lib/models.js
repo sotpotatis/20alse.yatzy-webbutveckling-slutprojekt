@@ -22,6 +22,10 @@ export default function defineModels(sequelize) {
                 type: DataTypes.BOOLEAN,
                 defaultValue: false
             },
+            initialized: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false
+            },
             createdAt: {
                 type: DataTypes.DATE,
                 defaultValue: DataTypes.NOW
@@ -51,7 +55,8 @@ export default function defineModels(sequelize) {
             // Implementera getter och setter för att tillåta två typer.
             get(){
                 const value = this.getDataValue("number")
-                return Number.isNaN(value) ? value : Number(value)
+                const valueAsNumber = Number(value)
+                return Number.isNaN(valueAsNumber) ? value : Number(value)
             },
             set(value){
                 // Validera att värdet är tillåtet
