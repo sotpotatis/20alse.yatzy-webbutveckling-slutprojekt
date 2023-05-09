@@ -50,7 +50,7 @@ export default function Container({
   // Lägg in ikon om en sådan finns
   return (
     <div
-      className={`flex flex-col shrink-0 bg-white max-w-full max-h-full ${width} ${height} overflow-scroll border-gray-200 border-2 z-50 rounded-lg ${additionalClasses}`}
+      className={`flex flex-col shrink-0 bg-white max-w-full max-h-full ${width} ${height} overflow-auto border-gray-200 border-2 z-50 rounded-lg ${additionalClasses}`}
     >
       {titlePart}
       <div

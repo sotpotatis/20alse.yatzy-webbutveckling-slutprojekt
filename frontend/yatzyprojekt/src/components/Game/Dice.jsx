@@ -2,6 +2,7 @@
 Renderar en tärning. */
 // Importera tärningsbilder
 import { Icon } from "@iconify/react";
+import {runOnEnterPress} from "../../lib/utils.js";
 
 export default function Dice({ activeSide, isLocked, isUnlockable, onLocked }) {
   if (activeSide === null){
@@ -35,8 +36,11 @@ export default function Dice({ activeSide, isLocked, isUnlockable, onLocked }) {
       </p>
     );
   }
+  // Skapa en funktion när tärningen interageras med (klickas på eller navigeras till med hjälp av tangentbordet
+  const onClick = !isLocked || isUnlockable ? onLocked : null
+  const onKeyboard = onClick !== null ? (event)=>{runOnEnterPress(event, onClick)}: null
   return (
-    <div onClick={!isLocked || isUnlockable ? onLocked : null}>{children}</div>
+    <div onClick={onClick} tabIndex="0" onKeyDown={onKeyboard}>{children}</div>
   );
 }
 Dice.defaultProps = {

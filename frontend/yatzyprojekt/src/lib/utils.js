@@ -34,10 +34,30 @@ export function copyTextToClipboard(text, callbackFunction) {
     callbackFunction(false);
   }
 }
+
+/**
+ * Hämtar sparad autentisering från localStorage. Används för multiplayer.
+ * @return {str|null} autentiserings-tokenen om en sparad autentisering hittades, annars null
+ */
 export function getSavedAuthentication() {
   console.log(`Sparad autentisering: ${localStorage.userSecret}.`)
   return localStorage.userSecret !== undefined ? localStorage.userSecret : null;
 }
+/**
+ * Sparar en autentiseringstoken i localStorage. Används för multiplayer.
+ * @param key Autentiserings-tokenen som ska användas
+ */
 export function saveAuthentication(key) {
   localStorage.userSecret = key;
+}
+
+/**
+ * Kör en funktion endast om enter-tangenten har tryckts ned.
+ * @param event Eventet som tagits emot av tangentrelaterade händelsen.
+ * @param onEnterPress Funktionen som ska köras om enter har tryckts på.
+ */
+export function runOnEnterPress(event, onEnterPress){
+  if (event.key === "Enter"){
+    onEnterPress()
+  }
 }

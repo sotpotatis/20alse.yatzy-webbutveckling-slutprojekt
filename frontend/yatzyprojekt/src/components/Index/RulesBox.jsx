@@ -3,8 +3,10 @@ Visar en "regelbox" med information om regler.*/
 import { possibleDiceStates } from "20alse-yatzy-shared-code";
 import Heading from "../Heading";
 import Container from "../Container.jsx";
+import RulesBoxSection from "./RulesBoxSection";
 export default function RulesBox({ onClose }) {
   // Skapa text för varje kombination
+    // Notera att {" "} används för att få mellanrum mellan saker och ting.
   let combinationElements = [];
   for (const combination of Object.values(possibleDiceStates)) {
     combinationElements.push(
@@ -15,25 +17,27 @@ export default function RulesBox({ onClose }) {
     );
   }
   const children = [
-    <Heading level={2} size={3} icon="mingcute:video-fill">
-      Video
-    </Heading>,
-    <hr className="border-2 w-full" />,
-    <p>Föredrar du videoformat? Kolla på videon nedan!</p>,
-    <iframe
-      width="560"
-      height="315"
-      src="https://www.youtube-nocookie.com/embed/LEY_E8MRK4o"
-      title="YouTube video player"
-      frameBorder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-      allowFullScreen
-    ></iframe>,
-    <Heading level={2} size={3} icon="mdi:file-document">
-      Text
-    </Heading>,
-    <hr className="border-2 w-full" />,
-    <p>
+      <RulesBoxSection
+        title={"Video"}
+        icon={"mingcute:video-fill"}
+        children={
+          [
+          <p>Föredrar du videoformat? Kolla på videon nedan!</p>,
+          <iframe
+          width="560"
+          height="315"
+          src="https://www.youtube-nocookie.com/embed/LEY_E8MRK4o"
+          title="YouTube video player"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+          ></iframe>]
+        }/>,
+      <RulesBoxSection
+        title={"Text"}
+        icon={"mdi:file-document"}
+        children={
+          [<p>
       Varmt välkommen till Yatzy - ett spel där ditt uppdrag är att{" "}
       <i>kasta tärningar</i> och <i>få poäng genom att få kombinationer!</i>
     </p>,
@@ -59,7 +63,8 @@ export default function RulesBox({ onClose }) {
       Lista över kombinationer
     </Heading>,
     <p>Så vilka kombinationer kan man få? En lista hittar du nedan.</p>,
-    <ul className="list-disc text-left">{combinationElements}</ul>,
+    <ul className="list-disc text-left">{combinationElements}</ul>]
+        }/>
   ];
   return (
     <Container

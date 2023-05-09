@@ -1,5 +1,6 @@
 import Badge from "../Badge";
 import colors from "tailwindcss/colors.js";
+import {runOnEnterPress} from "../../lib/utils";
 
 /* ScoreboardBadge.jsx
 För att visa poäng i scoreboardet använder jag ett badge-liknande
@@ -39,6 +40,7 @@ export default function ScoreBoardBadge({
       additionalClasses={textSizeClass + " " + otherClases}
       color={badgeColor}
       onClick={onClick}
+      onKeyDown={onClick !== null ? (event)=>runOnEnterPress(event, onClick): null}
     />
   );
 }

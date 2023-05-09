@@ -43,7 +43,7 @@ export default function DiceWrapper({
     >
       <div
         key="dices-wrapper"
-        className="grid grid-cols-3 md:grid-cols-5 justify-center align-center items-center text-center place-content-center gap-x-12 gap-y-12"
+        className="grid grid-cols-3 md:grid-cols-5 gap-x-12 gap-y-12"
       >
         {dices}
       </div>

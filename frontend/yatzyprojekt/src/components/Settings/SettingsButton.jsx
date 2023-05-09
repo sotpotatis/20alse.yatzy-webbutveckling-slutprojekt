@@ -18,7 +18,7 @@ export default function SettingsButton(props) {
     <div
       key="settingsButtonComputer"
       role={"button"}
-      className="hidden md:absolute text-white bg-blue-400 shadow-lg max-w-min right-0 bottom-0 p-4 m-12 rounded-full text-3xl z-30"
+      className="absolute invisible md:visible text-white bg-blue-400 shadow-lg max-w-min right-0 bottom-0 p-4 m-12 rounded-full text-3xl z-30"
       aria-label="Inställningsknapp"
       onClick={onSettingsButtonClick}
     >
