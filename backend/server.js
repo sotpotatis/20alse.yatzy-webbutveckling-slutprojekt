@@ -15,7 +15,8 @@ const DATABASE_PORT = parseInt(process.env.DATABASE_PORT) || 1433
 const DATABASE_NAME = process.env.DATABASE_NAME;
 const DATABASE_USER_NAME = process.env.DATABASE_USER_NAME;
 const DATABASE_USER_PASSWORD = process.env.DATABASE_USER_PASSWORD;
-const SOCKET_SERVER_ADDRESS = process.env.SOCKET_SERVER_ADDRESS || "localhost"; // Standardport är 3000
+const DATABASE_DIALECT = process.env.DATABASE_DIALECT || "mysql" // Standard "dialekt" är mysql
+const SOCKET_SERVER_ADDRESS = process.env.SOCKET_SERVER_ADDRESS || "localhost"; // Standardadress/host för servern är 3000
 const SOCKET_SERVER_PORT = parseInt(process.env.SOCKET_SERVER_PORT )|| 3000; // Standardport är 3000
 
 assert.ok(DATABASE_SERVER, "Du har inte specificerat en databasserver.");
@@ -33,7 +34,7 @@ const sequelize = new Sequelize(
     {
         host: DATABASE_SERVER,
         port: DATABASE_PORT,
-        dialect: "mysql"
+        dialect: DATABASE_DIALECT
     }
 )
 // Definera alla modeller för databasen.
