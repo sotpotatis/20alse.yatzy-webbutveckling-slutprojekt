@@ -7,7 +7,7 @@ import { createContext } from "react";
 import { getSavedAuthentication } from "../lib/utils.js";
 // Lista ut vilken Socket-URL vi ska koppla upp mot
 const socketURL =
-  process.env.NODE_ENV === "production" ? "" : "http://localhost:3000";
+  process.env.NODE_ENV === "production" ? "" : "http://localhost:3000/";
 let socketOptions = {
   autoConnect: true,
 };

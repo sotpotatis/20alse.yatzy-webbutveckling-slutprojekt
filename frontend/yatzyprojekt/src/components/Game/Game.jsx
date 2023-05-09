@@ -14,6 +14,7 @@ import { SocketContext } from "../../context/socket.js";
 import LocalGameStateHandler from "../../lib/localGameStateHandler.js";
 import MultiplayerGameStateHandler from "../../lib/multiplayerGameStateHandler.js";
 import WinScreen from "./WinScreen";
+import ServerOperationSpinner from "./ServerOperationSpinner";
 /* GamePage.jsx
 Innehåller själva spelet. */
 export default function Game() {
@@ -33,6 +34,7 @@ export default function Game() {
   const [tentativePoints, setTentativePoints] = useState(null); // Spara preliminära poäng
   // Spåra om saker och ting laddas
   const [isLoading, setLoading] = useState(false); // Vi behöver ladda lite saker om vi har multiplayer
+  const [isSmallLoading, setSmallLoading] = useState(false); // Vi behöver ladda lite saker om vi har multiplayer
   const [currentGameState, setCurrentGameState] = useState(null);
   const [player, setPlayer] = useState(null); // Information om den användaren som spelar spelet.
   // Spåra felmeddelande
@@ -65,6 +67,7 @@ export default function Game() {
           setPlayer,
           setTentativePoints,
           setLoading,
+          setSmallLoading,
           setErrorMessage,
         )
   ); // Initiera en hanterare för spelstatus om vi använder ett lokalt spel.
@@ -210,6 +213,7 @@ export default function Game() {
             name: currentGameState.currentPlayerName,
             me: currentGameState.currentPlayerName === player.name,
           }}
+          isSmallLoading={isSmallLoading}
           onReRollButtonClick={reRollFunction}
           onDoneButtonClick={doneFunction}
           onDiceLocked={lockFunction}
@@ -224,6 +228,9 @@ export default function Game() {
         />
       </div>
     );
+  }
+  if (isSmallLoading) { // Lägg till liten loading spinner
+    children.push(<ServerOperationSpinner/>)
   }
   return <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>;
 }

@@ -300,8 +300,10 @@ function prepareForPlayer(game, models, socket, newPlayerName, callback){
  */
 function generateDiceNumbers(game, models, socket, callback, timeoutCallback=null){
     console.log("Genererar nummer på tärningarna....")
-    waitForDiceUpdate(game.dices, (dice)=>{
-        dice.number = randomNumber(1, 6)
+    waitForDiceUpdate(game.dices, (dice) => {
+        if (!dice.saved) {
+            dice.number = randomNumber(1, 6)
+        }
         return dice
     }, ()=>{
         console.log("Numret på alla tärningar har uppdaterats.")
@@ -459,8 +461,6 @@ const socketHandlers = {
         else {
             findGameById(models, message.gameCode.toString(), includeEverything(models), (game)=>{
                 if (game !== null){
-
-
                 // Hitta spel från meddelande
                 generateDiceNumbers(game, models, socket,()=>{
                         console.log("Tärningarna har kastats och spelaren har underrättats.")

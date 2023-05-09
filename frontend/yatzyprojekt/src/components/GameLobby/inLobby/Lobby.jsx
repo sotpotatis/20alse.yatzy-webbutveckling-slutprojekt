@@ -108,7 +108,11 @@ export default function Lobby({ gameCode, setGameCode }) {
                 onGameStart();
               });
               setPlayer(response.player); // Spara den aktuella spelaren.
+              const oldAuthFound = getSavedAuthentication() !== null
               saveAuthentication(response.player.secret); // Spara användarens nyckel så vi kan återansluta
+              if (!oldAuthFound) {
+                location.reload()
+              }
             } else {
               console.warn(
                 `Misslyckades med att gå med i ett spel: ${response.errorMessage}.`
@@ -124,7 +128,8 @@ export default function Lobby({ gameCode, setGameCode }) {
   if (errorMessage !== null) {
     return (
       <ErrorContainer
-        message={errorMessage + ". Testa att ansluta lite senare."}
+        message={errorMessage}
+        smallMessage="Testa att ansluta lite senare."
       />
     );
   } else if (connectionPending) {

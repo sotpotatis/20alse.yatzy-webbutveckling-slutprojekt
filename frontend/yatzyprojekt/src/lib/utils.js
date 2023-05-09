@@ -35,7 +35,8 @@ export function copyTextToClipboard(text, callbackFunction) {
   }
 }
 export function getSavedAuthentication() {
-  return "userSecret" in localStorage ? localStorage.userSecret : null;
+  console.log(`Sparad autentisering: ${localStorage.userSecret}.`)
+  return localStorage.userSecret !== undefined ? localStorage.userSecret : null;
 }
 export function saveAuthentication(key) {
   localStorage.userSecret = key;

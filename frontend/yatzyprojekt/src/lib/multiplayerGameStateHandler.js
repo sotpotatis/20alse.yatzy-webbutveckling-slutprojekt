@@ -9,6 +9,7 @@ export default class MultiplayerGameStateHandler {
     setPlayer,
     setTentativePoints,
     setLoading,
+    setSmallLoading,
     setErrorMessage
   ) {
     this.setCurrentGameState = setCurrentGameState;
@@ -16,6 +17,7 @@ export default class MultiplayerGameStateHandler {
     this.setTentativePoints = setTentativePoints;
     this.setErrorMessage = setErrorMessage;
     this.setLoading = setLoading;
+    this.setSmallLoading = setSmallLoading;
     const functions = [
       "responseHandler",
       "rollDices",
@@ -51,12 +53,12 @@ export default class MultiplayerGameStateHandler {
           "Tog emot uppdaterad tärningsstatus från servern",
           response
         );
-        this.setLoading(false);
+        this.setSmallLoading(false);
       });
     });
     socket.emit("rollDice", {gameCode: gameState.gameCode})
     console.log("Meddelande \"emittat\".")
-    this.setLoading(true);
+    this.setSmallLoading(true);
   }
   onDoneButtonClick(gameState, socket) {
     console.log("Hämtar möjliga poäng...");
@@ -65,10 +67,10 @@ export default class MultiplayerGameStateHandler {
       this.responseHandler(response, () => {
         console.log("Tog emot poäng från servern", response);
         this.setTentativePoints(response.result);
-        this.setLoading(false);
+        this.setSmallLoading(false);
       });
     });
-    this.setLoading(true);
+    this.setSmallLoading(true);
     socket.emit("possibleScores", {gameCode: gameState.gameCode});
   }
   onScorePick(gameState, scoreId, socket) {
@@ -77,7 +79,7 @@ export default class MultiplayerGameStateHandler {
       this.responseHandler(response, () => {
         if (response.message === "Poängen har uppdaterats.") {
           console.log("Poäng har plockats!");
-          this.setLoading(false);
+          this.setSmallLoading(false);
         } else {
           console.warn(
             `Oväntat svar mottaget från servern: ${response.message}`
@@ -88,18 +90,20 @@ export default class MultiplayerGameStateHandler {
         }
       });
     });
-    this.setLoading(true);
+    this.setSmallLoading(true);
     socket.emit("pickScore", { requestedScoreType: scoreId, gameCode: gameState.gameCode });
   }
-  onDiceLocked(gameState, diceIndex, socket){
-    console.log(`"Togglar" en tärning...`)
-    socket.on("toggleDice", (response) => {
-      this.responseHandler(response, () => {
+  onDiceLocked(gameState, diceIndex, socket) {
+    if (gameState.dices[diceIndex].number !== "empty") {
+      console.log(`"Togglar" en tärning...`)
+      socket.on("toggleDice", (response) => {
+        this.responseHandler(response, () => {
           console.log("Tärningen har låsts/låsts upp!");
-          this.setLoading(false);
+          this.setSmallLoading(false);
+        });
       });
-    });
-    this.setLoading(true);
-    socket.emit("toggleDice", {diceIndex: diceIndex, gameCode: gameState.gameCode})
+      this.setSmallLoading(true);
+      socket.emit("toggleDice", { diceIndex: diceIndex, gameCode: gameState.gameCode })
+    }
   }
 }

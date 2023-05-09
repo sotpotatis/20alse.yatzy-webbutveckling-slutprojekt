@@ -15,6 +15,9 @@ module.exports = {
         silver: "#C0C0C0",
         bronze: "#CD7F32",
       },
+      zIndex: {
+        "60": "60"
+      }
     },
   },
   plugins: [
