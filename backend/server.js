@@ -7,6 +7,7 @@ import Sequelize from "sequelize";
 import * as dotenv from "dotenv";
 import { Server } from "socket.io";
 import { createServer } from "http";
+import express from "express";
 import cors from "cors";
 // Ladda hemligheter från en eventuell .env-fil.
 dotenv.config()
@@ -50,7 +51,7 @@ sequelize.sync().then(() => {
     console.log("Databassynkronisering klar.")
     // Starta nu servern som klienter kan koppla upp mot.
     // Servern använder teknologin WebSockets och biblioteket Socket.io
-    const httpServer = createServer()
+    const httpServer = createServer(express())
     const socketServer = new Server(httpServer, {
         cors: { // Specificera CORS-regler, annars kommer inte klienter i webbläsare vela koppla upp sig.
             origin: "*",

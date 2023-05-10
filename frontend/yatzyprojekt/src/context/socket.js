@@ -5,9 +5,10 @@ Tack vare React-kontext slipper man skicka vidare en variabel i all oändlighet.
 import io from "socket.io-client";
 import { createContext } from "react";
 import { getSavedAuthentication } from "../lib/utils.js";
+import.meta.env;
 // Lista ut vilken Socket-URL vi ska koppla upp mot
 const socketURL =
-  process.env.NODE_ENV === "production" ? "" : "http://localhost:3000/";
+  import.meta.env.PROD ? "http://169.155.56.78:3000" : "http://localhost:3000/";
 let socketOptions = {
   autoConnect: true,
 };

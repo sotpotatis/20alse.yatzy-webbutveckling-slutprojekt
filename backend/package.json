@@ -18,8 +18,10 @@
     "20alse-yatzy-shared-code": "^1.0.6",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
+    "express": "^4.18.2",
     "mysql2": "^3.2.0",
     "nanoid": "^4.0.2",
+    "pg": "^8.10.0",
     "sequelize": "^6.29.3",
     "socket.io": "^4.6.1"
   }
