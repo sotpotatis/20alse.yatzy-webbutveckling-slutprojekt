@@ -1,2 +1,5 @@
 #Denna fil är tom just nu men kommer fyllas på snart! :)
 frontend/.../README.md
+backend/.dockerignore
+backend/fly.toml
+backend/Dockerfile
