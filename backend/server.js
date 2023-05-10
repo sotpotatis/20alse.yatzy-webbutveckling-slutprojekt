@@ -18,7 +18,7 @@ const DATABASE_USER_NAME = process.env.DATABASE_USER_NAME;
 const DATABASE_USER_PASSWORD = process.env.DATABASE_USER_PASSWORD;
 const DATABASE_DIALECT = process.env.DATABASE_DIALECT || "mysql" // Standard "dialekt" är mysql
 const SOCKET_SERVER_ADDRESS = process.env.SOCKET_SERVER_ADDRESS || "localhost"; // Standardadress/host för servern är 3000
-const SOCKET_SERVER_PORT = parseInt(process.env.SOCKET_SERVER_PORT )|| 3000; // Standardport är 3000
+const SOCKET_SERVER_PORT = parseInt(process.env.SOCKET_SERVER_PORT ) || parseInt(process.env.PORT )|| 3000; // Standardport är 3000
 
 assert.ok(DATABASE_SERVER, "Du har inte specificerat en databasserver.");
 assert.ok(DATABASE_NAME, "Du har inte specificerat ett databasnamn.");
