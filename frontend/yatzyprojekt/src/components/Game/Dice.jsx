@@ -4,7 +4,7 @@ Renderar en tärning. */
 import { Icon } from "@iconify/react";
 import {runOnEnterPress} from "../../lib/utils.js";
 
-export default function Dice({ activeSide, isLocked, isUnlockable, onLocked }) {
+export default function Dice({ activeSide, isLocked, onLocked }) {
   if (activeSide === null){
     activeSide = "empty"
   }
@@ -37,7 +37,7 @@ export default function Dice({ activeSide, isLocked, isUnlockable, onLocked }) {
     );
   }
   // Skapa en funktion när tärningen interageras med (klickas på eller navigeras till med hjälp av tangentbordet
-  const onClick = !isLocked || isUnlockable ? onLocked : null
+  const onClick = onLocked
   const onKeyboard = onClick !== null ? (event)=>{runOnEnterPress(event, onClick)}: null
   return (
     <div onClick={onClick} tabIndex="0" onKeyDown={onKeyboard}>{children}</div>
@@ -45,6 +45,5 @@ export default function Dice({ activeSide, isLocked, isUnlockable, onLocked }) {
 }
 Dice.defaultProps = {
   activeSide: 1,
-  isLocked: false,
-  isUnlockable: false,
+  isLocked: false
 };
