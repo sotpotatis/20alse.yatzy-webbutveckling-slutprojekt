@@ -170,12 +170,12 @@ export default class LocalGameStateHandler {
       if (!gameState.dices[diceIndex].saved) {
           console.log(`Låser tärningsstatus för tärning ${diceIndex}...`);
           gameState.dices[diceIndex].saved = true;
-        } else {
-          console.log(`Låser upp tärningsstatus för tärning ${diceIndex}...`);
-          gameState.dices[diceIndex].saved = false;
-        }
-        this.setGameState(gameState);
-        console.log("Tärning låst.");
+      } else {
+        console.log(`Låser upp tärningsstatus för tärning ${diceIndex}...`);
+        gameState.dices[diceIndex].saved = false;
+      }
+      this.setGameState(gameState);
+      console.log("Tärning låst.");
     }
   }
   checkWin(gameState) {
