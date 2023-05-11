@@ -39,6 +39,7 @@ export default function GameCodeForm({ gameCode, onGameCode }) {
     <div key="game-code-form">
       <form className="flex flex-col gap-y-4"
         onSubmit={(event) => { // Gå med i spelet när man klickar på enter
+          event.preventDefault()
           onJoinRequest()
         }}>
         <InputField

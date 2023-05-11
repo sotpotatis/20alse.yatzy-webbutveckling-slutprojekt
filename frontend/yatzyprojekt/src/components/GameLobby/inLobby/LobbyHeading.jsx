@@ -5,9 +5,11 @@ import { copyTextToClipboard } from "../../../lib/utils.js";
 import { useEffect, useState } from "react";
 
 export default function LobbyHeading({ baseURL, gameCode }) {
-  const joinUrl = `${baseURL}/lobby?gameCode=${gameCode}`; // Skapa en fullständig länk för att gå med i spelet
-  const [gameCodeCopiedToClipboard, setGameCodeCopiedToClipboard] =
+  const [linkCopiedToClipboard, setlinkCopiedToClipboard] =
     useState(false);
+    const [gameCodeCopiedToClipboard, setgameCodeCopiedToClipboard] =
+    useState(false);
+  const lobbyURL = `${baseURL.trim("/")}/lobby`
   // Skapa en laddningsanimation när man läser in
   const [numberOfDots, setNumberOfDots] = useState(0);
   const updateNumberOfDots = () => {
@@ -21,16 +23,21 @@ export default function LobbyHeading({ baseURL, gameCode }) {
     <Heading size={1}>Väntar på spelare{`.`.repeat(numberOfDots)}</Heading>,
     <p>Låt dina kompisar gå med i spelet genom att skicka följande länk:</p>,
     <p
-      className="select-all px-3 py-1 rounded-full bg-gray-700 w-auto"
+      className="select-all px-3 py-1 rounded-full bg-gray-700 w-auto hover:cursor-pointer"
+      onClick={() => {
+        copyTextToClipboard(lobbyURL, (textCopied) => {
+          setlinkCopiedToClipboard(textCopied);
+        });
+      }}
     >
-      {baseURL.trim("/")}/lobby
+      {lobbyURL}
     </p>,
     <p>Ange kod:</p>,
     <p
-    className="select-all px-3 py-1 text-xl rounded-full bg-gray-700 w-min font-bold"
+    className="select-all px-3 py-1 text-xl rounded-full bg-gray-700 w-min font-bold hover:cursor-pointer"
     onClick={() => {
       copyTextToClipboard(gameCode, (textCopied) => {
-        setGameCodeCopiedToClipboard(textCopied);
+        setgameCodeCopiedToClipboard(textCopied);
       });
     }}
   >
@@ -40,9 +47,15 @@ export default function LobbyHeading({ baseURL, gameCode }) {
   useEffect(() => {
     setTimeout(updateNumberOfDots, 750);
   });
-  // Visa ett meddelande om länken för spelet kopierats till klippbordet
+  // Visa ett meddelande om spelkoden för spelet kopierats till klippbordet
   if (gameCodeCopiedToClipboard) {
     children.push(
+      <p className="text-blue-200 text-sm">Kopierad till urklipp!</p>
+    );
+  }
+  // Visa ett meddelande om länk för spelet kopierats till klippbordet
+  if (linkCopiedToClipboard) {
+    children.splice(3, 0,
       <p className="text-blue-200 text-sm">Kopierad till urklipp!</p>
     );
   }

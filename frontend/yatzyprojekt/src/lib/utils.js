@@ -40,7 +40,6 @@ export function copyTextToClipboard(text, callbackFunction) {
  * @return {str|null} autentiserings-tokenen om en sparad autentisering hittades, annars null
  */
 export function getSavedAuthentication() {
-  console.log(`Sparad autentisering: ${localStorage.userSecret}.`)
   return localStorage.userSecret !== undefined ? localStorage.userSecret : null;
 }
 /**
