@@ -17,7 +17,9 @@ export default function Toggle({ onSet, value }) {
       onClick={() => {
         onSet(!value);
       }}
-      onKeyDown={(event)=>{runOnEnterPress(event, onSet(!value))}}
+      onKeyDown={(event) => {
+        runOnEnterPress(event, onSet(!value));
+      }}
     >
       <p className={`w-12 text-2xl p-0 m-0`}>&#9679;</p>
     </div>

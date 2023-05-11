@@ -13,7 +13,7 @@ export default function DiceWrapper({
   onReRollButtonClick,
   onDoneButtonClick,
   onDiceLocked,
-  isSmallLoading
+  isSmallLoading,
 }) {
   let children = [];
   // Generera element för varje tärning
@@ -27,7 +27,9 @@ export default function DiceWrapper({
         key={`dice-${i}`}
         activeSide={diceData.number}
         isLocked={isLocked}
-        onLocked={()=>{onDiceLocked(i)}}
+        onLocked={() => {
+          onDiceLocked(i);
+        }}
       />
     );
   }
@@ -52,7 +54,11 @@ export default function DiceWrapper({
         className="flex flex-row gap-x-12 pt-12 w-full justify-center"
       >
         <Heading size={3} className="py-12">
-          Tur {gameState.currentTurnNumber !== null ? gameState.currentTurnNumber: "-"}/3
+          Tur{" "}
+          {gameState.currentTurnNumber !== null
+            ? gameState.currentTurnNumber
+            : "-"}
+          /3
         </Heading>
         <Button
           color="green"
@@ -60,7 +66,9 @@ export default function DiceWrapper({
           icon="ooui:reload"
           onClick={onReRollButtonClick}
           disabled={
-            gameState.isPickingScore || gameState.currentTurnNumber >= 3 || isSmallLoading
+            gameState.isPickingScore ||
+            gameState.currentTurnNumber >= 3 ||
+            isSmallLoading
           }
         />
         <Button
@@ -69,7 +77,9 @@ export default function DiceWrapper({
           icon="majesticons:close-line"
           onClick={onDoneButtonClick}
           disabled={
-            gameState.isPickingScore || gameState.currentTurnNumber === 0 || isSmallLoading
+            gameState.isPickingScore ||
+            gameState.currentTurnNumber === 0 ||
+            isSmallLoading
           }
         />
       </div>

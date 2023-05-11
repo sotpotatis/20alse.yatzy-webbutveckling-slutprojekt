@@ -5,11 +5,10 @@ import { copyTextToClipboard } from "../../../lib/utils.js";
 import { useEffect, useState } from "react";
 
 export default function LobbyHeading({ baseURL, gameCode }) {
-  const [linkCopiedToClipboard, setlinkCopiedToClipboard] =
+  const [linkCopiedToClipboard, setlinkCopiedToClipboard] = useState(false);
+  const [gameCodeCopiedToClipboard, setgameCodeCopiedToClipboard] =
     useState(false);
-    const [gameCodeCopiedToClipboard, setgameCodeCopiedToClipboard] =
-    useState(false);
-  const lobbyURL = `${baseURL.trim("/")}/lobby`
+  const lobbyURL = `${baseURL.trim("/")}/lobby`;
   // Skapa en laddningsanimation när man läser in
   const [numberOfDots, setNumberOfDots] = useState(0);
   const updateNumberOfDots = () => {
@@ -34,15 +33,15 @@ export default function LobbyHeading({ baseURL, gameCode }) {
     </p>,
     <p>Ange kod:</p>,
     <p
-    className="select-all px-3 py-1 text-xl rounded-full bg-gray-700 w-min font-bold hover:cursor-pointer"
-    onClick={() => {
-      copyTextToClipboard(gameCode, (textCopied) => {
-        setgameCodeCopiedToClipboard(textCopied);
-      });
-    }}
-  >
-    {gameCode}
-  </p>,
+      className="select-all px-3 py-1 text-xl rounded-full bg-gray-700 w-min font-bold hover:cursor-pointer"
+      onClick={() => {
+        copyTextToClipboard(gameCode, (textCopied) => {
+          setgameCodeCopiedToClipboard(textCopied);
+        });
+      }}
+    >
+      {gameCode}
+    </p>,
   ];
   useEffect(() => {
     setTimeout(updateNumberOfDots, 750);
@@ -55,7 +54,9 @@ export default function LobbyHeading({ baseURL, gameCode }) {
   }
   // Visa ett meddelande om länk för spelet kopierats till klippbordet
   if (linkCopiedToClipboard) {
-    children.splice(3, 0,
+    children.splice(
+      3,
+      0,
       <p className="text-blue-200 text-sm">Kopierad till urklipp!</p>
     );
   }

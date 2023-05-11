@@ -44,7 +44,7 @@ export default function PlayerWrapper({ gameState, player }) {
   }
   // Visa max tre spelare i taget i menyn
   let playerElementsToShow = [];
-  if (playerElements.length > 3){
+  if (playerElements.length > 3) {
     if (activePlayerIndex + 3 < playerElements.length - 1) {
       playerElementsToShow = playerElements.slice(
         activePlayerIndex,
@@ -58,9 +58,8 @@ export default function PlayerWrapper({ gameState, player }) {
       );
       playerElementsToShow.push(...playerElements.slice(0, overflow));
     }
-    }
-  else {
-    playerElementsToShow = playerElements
+  } else {
+    playerElementsToShow = playerElements;
   }
   return (
     <div className="p-3 overflow-auto">

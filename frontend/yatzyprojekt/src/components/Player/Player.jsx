@@ -26,28 +26,41 @@ function PlayerCard({ name, score, isMe, isCurrentTurn }) {
     </div>
   );
 }
-function PlayerCompact({ name, index, score, isMe, isCurrentTurn, numbered, number }) {
+function PlayerCompact({
+  name,
+  index,
+  score,
+  isMe,
+  isCurrentTurn,
+  numbered,
+  number,
+}) {
   // Vi vill ha fyra delar med info:
   // 1: avataren
   // 2: användarens poäng
   // 3: om användaren är du eller inte
   // 4: om användaren just nu kastar tärniningar
   // Rendera olika rubriker beroende på om "numbered" är true eller false
-  const indexToColor = (playerIndex) => { // Visa guld, silver och bronsfärger för topp 3. Körs endast om numbered är true.
+  const indexToColor = (playerIndex) => {
+    // Visa guld, silver och bronsfärger för topp 3. Körs endast om numbered är true.
     if (playerIndex <= 3) {
-      return [
-        "bg-gold",
-        "bg-silver",
-        "bg-bronze",
-      ][playerIndex]
+      return ["bg-gold", "bg-silver", "bg-bronze"][playerIndex];
+    } else {
+      return "bg-gray-500"; // Standardfärg om användaren inte är i "topp"
     }
-    else {
-      return "bg-gray-500" // Standardfärg om användaren inte är i "topp"
-    }
-  }
-  let headingChildren = !numbered ? name : [<span className={`rounded-lg px-2 mx-2 text-2xl font-bolder h-min  ${indexToColor(number-1)}`} >
-    <i>{number}</i>
-  </span>, name]
+  };
+  let headingChildren = !numbered
+    ? name
+    : [
+        <span
+          className={`rounded-lg px-2 mx-2 text-2xl font-bolder h-min  ${indexToColor(
+            number - 1
+          )}`}
+        >
+          <i>{number}</i>
+        </span>,
+        name,
+      ];
   let nameElements = [
     <Heading size={3}>{headingChildren}</Heading>,
     <ScoreBoardBadge points={score} />,
@@ -81,7 +94,7 @@ export default function Player({
   isMe,
   isCurrentTurn,
   numbered,
-  number
+  number,
 }) {
   // Returnera den komponent som efterfrågas
   if (type === "card") {
@@ -112,5 +125,5 @@ Player.defaultProps = {
   score: null,
   isMe: false,
   isCurrentTurn: true,
-  numbered: false
+  numbered: false,
 };

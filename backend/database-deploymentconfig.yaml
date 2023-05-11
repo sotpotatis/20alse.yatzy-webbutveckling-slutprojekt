@@ -41,7 +41,7 @@ spec:
                 configMapKeyRef:
                   key: MYSQL_USER
                   name: mysql_server-env
-          image: ' '
+          image: " "
           name: database
           ports:
             - containerPort: 3306

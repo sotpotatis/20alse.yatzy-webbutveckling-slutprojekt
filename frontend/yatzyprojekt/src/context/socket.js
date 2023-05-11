@@ -6,8 +6,9 @@ import io from "socket.io-client";
 import { createContext } from "react";
 import { getSavedAuthentication } from "../lib/utils.js";
 // Lista ut vilken Socket-URL vi ska koppla upp mot
-const socketURL =
-  import.meta.env.PROD ? "https://yatzyprojekt.fly.dev" : "http://localhost:3000/";
+const socketURL = import.meta.env.PROD
+  ? "https://yatzyprojekt.fly.dev"
+  : "http://localhost:3000/";
 let socketOptions = {
   autoConnect: true,
 };

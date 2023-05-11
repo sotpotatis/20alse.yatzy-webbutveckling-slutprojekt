@@ -7,15 +7,22 @@ const colorMappings = {
   red: "bg-red-400 text-white",
   gray: "bg-gray-400 text-black",
 };
-export default function Badge({ color, text, additionalClasses, onClick, onKeyDown }) {
+export default function Badge({
+  color,
+  text,
+  additionalClasses,
+  onClick,
+  onKeyDown,
+}) {
   return (
     <div
       className={
         `px-1 py-3 font-bold rounded-lg px-3 ${colorMappings[color]}` +
         (additionalClasses !== null ? ` ${additionalClasses}` : "")
       }
-      tabIndex={onKeyDown !== null ? "0": null}
-      onClick={onClick} onKeyDown={onKeyDown}
+      tabIndex={onKeyDown !== null ? "0" : null}
+      onClick={onClick}
+      onKeyDown={onKeyDown}
     >
       <p>{text}</p>
     </div>
@@ -25,5 +32,5 @@ Badge.defaultProps = {
   color: "blue",
   additionalClasses: null,
   onClick: null,
-  onKeyDown: null
+  onKeyDown: null,
 };

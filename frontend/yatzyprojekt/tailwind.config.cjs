@@ -16,8 +16,8 @@ module.exports = {
         bronze: "#CD7F32",
       },
       zIndex: {
-        "60": "60"
-      }
+        60: "60",
+      },
     },
   },
   plugins: [

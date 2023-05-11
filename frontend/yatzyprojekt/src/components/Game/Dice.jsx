@@ -2,11 +2,11 @@
 Renderar en tärning. */
 // Importera tärningsbilder
 import { Icon } from "@iconify/react";
-import {runOnEnterPress} from "../../lib/utils.js";
+import { runOnEnterPress } from "../../lib/utils.js";
 
 export default function Dice({ activeSide, isLocked, onLocked }) {
-  if (activeSide === null){
-    activeSide = "empty"
+  if (activeSide === null) {
+    activeSide = "empty";
   }
   const diceImage = `dice-${activeSide.toString()}.png`; // Hämta bild som ska användas
   let dice = (
@@ -37,13 +37,20 @@ export default function Dice({ activeSide, isLocked, onLocked }) {
     );
   }
   // Skapa en funktion när tärningen interageras med (klickas på eller navigeras till med hjälp av tangentbordet
-  const onClick = onLocked
-  const onKeyboard = onClick !== null ? (event)=>{runOnEnterPress(event, onClick)}: null
+  const onClick = onLocked;
+  const onKeyboard =
+    onClick !== null
+      ? (event) => {
+          runOnEnterPress(event, onClick);
+        }
+      : null;
   return (
-    <div onClick={onClick} tabIndex="0" onKeyDown={onKeyboard}>{children}</div>
+    <div onClick={onClick} tabIndex="0" onKeyDown={onKeyboard}>
+      {children}
+    </div>
   );
 }
 Dice.defaultProps = {
   activeSide: 1,
-  isLocked: false
+  isLocked: false,
 };

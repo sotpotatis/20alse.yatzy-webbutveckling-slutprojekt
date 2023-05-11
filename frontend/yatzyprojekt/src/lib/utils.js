@@ -55,8 +55,8 @@ export function saveAuthentication(key) {
  * @param event Eventet som tagits emot av tangentrelaterade händelsen.
  * @param onEnterPress Funktionen som ska köras om enter har tryckts på.
  */
-export function runOnEnterPress(event, onEnterPress){
-  if (event.key === "Enter"){
-    onEnterPress()
+export function runOnEnterPress(event, onEnterPress) {
+  if (event.key === "Enter") {
+    onEnterPress();
   }
 }

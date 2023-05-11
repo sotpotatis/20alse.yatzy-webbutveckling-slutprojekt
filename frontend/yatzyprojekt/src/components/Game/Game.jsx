@@ -48,10 +48,10 @@ export default function Game() {
   useEffect(() => {
     // Kolla efter uppkoppling 2 gånger per sekund med multiplayer
     if (gameMode === "multiplayer") {
-      if (connectionPending){
+      if (connectionPending) {
         setInterval(checkIsConnected, 500);
-        setCurrentGameState(null)
-        setPlayer(null)
+        setCurrentGameState(null);
+        setPlayer(null);
       }
     }
   }, []);
@@ -68,7 +68,7 @@ export default function Game() {
           setTentativePoints,
           setLoading,
           setSmallLoading,
-          setErrorMessage,
+          setErrorMessage
         )
   ); // Initiera en hanterare för spelstatus om vi använder ett lokalt spel.
   // Validera URL-parametrar.
@@ -92,7 +92,8 @@ export default function Game() {
   }
   if (
     (currentGameState === null || player === null) &&
-    (!connectionPending || gameMode !== "multiplayer") && errorMessage === null
+    (!connectionPending || gameMode !== "multiplayer") &&
+    errorMessage === null
   ) {
     // Detta händer vid spelet start: då ska vi hämta spelstatus
     if (gameMode === "multiplayer") {
@@ -143,16 +144,22 @@ export default function Game() {
     children.push(
       <LoadingSpinner text={"Kontaktar servern..."} fullPage={true} />
     );
-  }
-  else if (currentGameState.initialized !== undefined && !currentGameState.initialized){ // initialized används av servern
+  } else if (
+    currentGameState.initialized !== undefined &&
+    !currentGameState.initialized
+  ) {
+    // initialized används av servern
     children.push(
-      <LoadingSpinner text={"Väntar på att servern ska starta spelet..."} fullPage={true} />
+      <LoadingSpinner
+        text={"Väntar på att servern ska starta spelet..."}
+        fullPage={true}
+      />
     );
-  }
-  else if (currentGameState.completed) { // Om spelets har avslutats
-    console.log("Spelet har avslutats. Visar resultatskärm...")
-      children.push(<WinScreen gameState={currentGameState} player={player} />)
- } // Om vi fortfarande ska köra spelet
+  } else if (currentGameState.completed) {
+    // Om spelets har avslutats
+    console.log("Spelet har avslutats. Visar resultatskärm...");
+    children.push(<WinScreen gameState={currentGameState} player={player} />);
+  } // Om vi fortfarande ska köra spelet
   else {
     console.log("Renderar spel...");
     // Skapa lite funktioner för när man klickar på olika knappar.
@@ -163,18 +170,22 @@ export default function Game() {
     let lockFunction = null;
     if (gameMode === "multiplayer") {
       reRollFunction = () => {
-        gameStateHandler.rollDices({...currentGameState}, socket);
+        gameStateHandler.rollDices({ ...currentGameState }, socket);
       };
       doneFunction = () => {
-        gameStateHandler.onDoneButtonClick({...currentGameState}, socket);
+        gameStateHandler.onDoneButtonClick({ ...currentGameState }, socket);
       };
       scorePickingFunction = (scoreId) => {
         console.log(`Plockar poäng ${scoreId}`);
-        gameStateHandler.onScorePick({...currentGameState},scoreId, socket)
+        gameStateHandler.onScorePick({ ...currentGameState }, scoreId, socket);
       };
       lockFunction = (diceIndex) => {
-      gameStateHandler.onDiceLocked({...currentGameState}, diceIndex, socket)
-    };
+        gameStateHandler.onDiceLocked(
+          { ...currentGameState },
+          diceIndex,
+          socket
+        );
+      };
     } else {
       reRollFunction = () => {
         gameStateHandler.onReRollButtonClick({ ...currentGameState });
@@ -182,8 +193,9 @@ export default function Game() {
       doneFunction = () => {
         gameStateHandler.onDoneButtonClick({ ...currentGameState });
       };
-            lockFunction = (diceIndex) => {
-      gameStateHandler.onDiceLocked({...currentGameState}, diceIndex)}
+      lockFunction = (diceIndex) => {
+        gameStateHandler.onDiceLocked({ ...currentGameState }, diceIndex);
+      };
       scorePickingFunction = (scoreId) => {
         console.log(`Plockar poäng "${scoreId}"...`);
         let newGameState = { ...currentGameState };
@@ -229,8 +241,11 @@ export default function Game() {
       </div>
     );
   }
-  if (isSmallLoading) { // Lägg till liten loading spinner
-    children.push(<ServerOperationSpinner/>)
+  if (isSmallLoading) {
+    // Lägg till liten loading spinner
+    children.push(<ServerOperationSpinner />);
   }
-  return <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>;
+  return (
+    <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>
+  );
 }

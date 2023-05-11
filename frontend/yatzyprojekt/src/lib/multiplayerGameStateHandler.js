@@ -40,8 +40,9 @@ export default class MultiplayerGameStateHandler {
     // Kör en callback-funktion om någon
     if (onSuccess !== null) {
       onSuccess(socketResponse);
-      if (socketResponse.gameState !== undefined){ // Om serversvaret innehåller ett gameState, uppdatera
-        this.setCurrentGameState(socketResponse.gameState)
+      if (socketResponse.gameState !== undefined) {
+        // Om serversvaret innehåller ett gameState, uppdatera
+        this.setCurrentGameState(socketResponse.gameState);
       }
     }
   }
@@ -56,8 +57,8 @@ export default class MultiplayerGameStateHandler {
         this.setSmallLoading(false);
       });
     });
-    socket.emit("rollDice", {gameCode: gameState.gameCode})
-    console.log("Meddelande \"emittat\".")
+    socket.emit("rollDice", { gameCode: gameState.gameCode });
+    console.log('Meddelande "emittat".');
     this.setSmallLoading(true);
   }
   onDoneButtonClick(gameState, socket) {
@@ -71,7 +72,7 @@ export default class MultiplayerGameStateHandler {
       });
     });
     this.setSmallLoading(true);
-    socket.emit("possibleScores", {gameCode: gameState.gameCode});
+    socket.emit("possibleScores", { gameCode: gameState.gameCode });
   }
   onScorePick(gameState, scoreId, socket) {
     console.log(`Plockar poäng ${scoreId}...`);
@@ -91,11 +92,14 @@ export default class MultiplayerGameStateHandler {
       });
     });
     this.setSmallLoading(true);
-    socket.emit("pickScore", { requestedScoreType: scoreId, gameCode: gameState.gameCode });
+    socket.emit("pickScore", {
+      requestedScoreType: scoreId,
+      gameCode: gameState.gameCode,
+    });
   }
   onDiceLocked(gameState, diceIndex, socket) {
     if (gameState.dices[diceIndex].number !== "empty") {
-      console.log(`"Togglar" en tärning...`)
+      console.log(`"Togglar" en tärning...`);
       socket.on("toggleDice", (response) => {
         this.responseHandler(response, () => {
           console.log("Tärningen har låsts/låsts upp!");
@@ -103,7 +107,10 @@ export default class MultiplayerGameStateHandler {
         });
       });
       this.setSmallLoading(true);
-      socket.emit("toggleDice", { diceIndex: diceIndex, gameCode: gameState.gameCode })
+      socket.emit("toggleDice", {
+        diceIndex: diceIndex,
+        gameCode: gameState.gameCode,
+      });
     }
   }
 }

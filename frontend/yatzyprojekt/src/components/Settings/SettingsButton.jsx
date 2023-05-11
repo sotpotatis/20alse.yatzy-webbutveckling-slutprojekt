@@ -20,20 +20,22 @@ export default function SettingsButton(props) {
       key="settingsButtonComputer"
       role={"button"}
       className="absolute invisible md:visible text-white bg-blue-400 shadow-lg max-w-min right-0 bottom-0 p-4 m-12 rounded-full text-3xl z-30"
-      aria-label="Inställningsknapp"
       onClick={onSettingsButtonClick}
-      onKeyDown={(event)=>{runOnEnterPress(event, onSettingsButtonClick)}}
+      onKeyDown={(event) => {
+        runOnEnterPress(event, onSettingsButtonClick);
+      }}
       tabIndex="0"
     >
+      <span className="not-sr-only hidden md:sr-only">Inställningsknapp</span>
       <Icon icon="material-symbols:settings" />
     </div>,
     <div
       key="settingButtonMobile"
       role="button"
       className="absolute top-0 grid-cols-1 w-full"
-      aria-label="Inställningsknapp"
       onClick={onSettingsButtonClick}
     >
+      <span className="not-sr-only hidden md:sr-only">Inställningsknapp</span>
       <div className="flex flex-row gap-x-2 w-min text-sm mx-auto text-black md:hidden bg-blue-400 p-2 rounded-full">
         <Icon icon="material-symbols:settings" />
         <p>Inställningar</p>

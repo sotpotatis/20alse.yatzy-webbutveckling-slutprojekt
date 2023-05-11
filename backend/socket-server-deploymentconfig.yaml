@@ -19,7 +19,7 @@ spec:
         io.kompose.service: socket-server
     spec:
       containers:
-        - image: ' '
+        - image: " "
           name: socket-server
           resources: {}
       restartPolicy: Always

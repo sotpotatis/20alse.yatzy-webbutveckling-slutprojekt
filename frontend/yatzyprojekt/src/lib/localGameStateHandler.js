@@ -161,15 +161,15 @@ export default class LocalGameStateHandler {
       console.log("Tärningar har kastats om.");
       this.announceNewGameState(gameState);
       if (gameState.currentTurnNumber === 3) {
-        this.onDoneButtonClick(gameState)
+        this.onDoneButtonClick(gameState);
       }
     }
   }
   onDiceLocked(gameState, diceIndex) {
-    if (gameState.dices[diceIndex].number !== "empty"){
+    if (gameState.dices[diceIndex].number !== "empty") {
       if (!gameState.dices[diceIndex].saved) {
-          console.log(`Låser tärningsstatus för tärning ${diceIndex}...`);
-          gameState.dices[diceIndex].saved = true;
+        console.log(`Låser tärningsstatus för tärning ${diceIndex}...`);
+        gameState.dices[diceIndex].saved = true;
       } else {
         console.log(`Låser upp tärningsstatus för tärning ${diceIndex}...`);
         gameState.dices[diceIndex].saved = false;
@@ -182,12 +182,7 @@ export default class LocalGameStateHandler {
     for (const player of gameState.players) {
       // Användaren plockar poäng som allteftersom läggs till på deras player.scores lista.
       // Om denna lista är full för alla användare har spelaren vunnit spelet.
-      if (
-        !(
-          player.scores.length ===
-          Object.keys(possibleDiceStates).length
-        )
-      ) {
+      if (!(player.scores.length === Object.keys(possibleDiceStates).length)) {
         return false;
       }
     }

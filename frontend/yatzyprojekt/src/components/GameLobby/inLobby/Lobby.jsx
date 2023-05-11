@@ -108,10 +108,10 @@ export default function Lobby({ gameCode, setGameCode }) {
                 onGameStart();
               });
               setPlayer(response.player); // Spara den aktuella spelaren.
-              const oldAuthFound = getSavedAuthentication() !== null
+              const oldAuthFound = getSavedAuthentication() !== null;
               saveAuthentication(response.player.secret); // Spara användarens nyckel så vi kan återansluta
               if (!oldAuthFound) {
-                location.reload()
+                location.reload();
               }
             } else {
               console.warn(
@@ -210,7 +210,10 @@ export default function Lobby({ gameCode, setGameCode }) {
           gameCode={gameCode}
         />
         <Heading size={2}>Anslutna spelare</Heading>
-        <div key="players" className="p-12 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-x-12 gap-y-12">
+        <div
+          key="players"
+          className="p-12 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-x-12 gap-y-12"
+        >
           {playerElements}
         </div>
         <div key="startGame" className="relative bottom-0 p-12">
