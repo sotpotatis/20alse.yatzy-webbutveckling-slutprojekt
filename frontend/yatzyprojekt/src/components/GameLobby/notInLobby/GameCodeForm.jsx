@@ -28,9 +28,19 @@ export default function GameCodeForm({ gameCode, onGameCode }) {
     showInputFieldInvalidMessage =
       !validGameCodeEnterred && gameCode !== null && gameCode.length > 0;
   }
+  const onJoinRequest = () => { // Funktion för när spelare vill gå med
+    // När knappen klickas på, validera spelarkoden. Om giltig, starta lobbyn.
+    if (validGameCodeEnterred) {
+      console.log("Går med i ett spel.");
+      navigate(`?gameCode=${gameCode}`);
+    }
+  }
   return (
     <div key="game-code-form">
-      <form className="flex flex-col gap-y-4">
+      <form className="flex flex-col gap-y-4"
+        onSubmit={(event) => { // Gå med i spelet när man klickar på enter
+          onJoinRequest()
+        }}>
         <InputField
           type={"text"}
           value={gameCode}
@@ -53,15 +63,9 @@ export default function GameCodeForm({ gameCode, onGameCode }) {
               ? null
               : "Ange en giltig spelkod för att gå vidare."
           }
-          onClick={() => {
-            // När knappen klickas på, validera spelarkoden. Om giltig, starta lobbyn.
-            if (validGameCodeEnterred) {
-              console.log("Går med i ett spel.");
-              navigate(`?gameCode=${gameCode}`);
-            }
-          }}
+          onClick={onJoinRequest}
         />
       </form>
     </div>
-  );
-}
+  )
+};

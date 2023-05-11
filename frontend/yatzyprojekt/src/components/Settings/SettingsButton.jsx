@@ -6,6 +6,7 @@ import { Icon } from "@iconify/react";
 import SettingsMenu from "./SettingsMenu";
 import Setting from "./Setting";
 import { useCookies } from "react-cookie";
+import { runOnEnterPress } from "../../lib/utils";
 export default function SettingsButton(props) {
   const [menuExpanded, setMenuExpanded] = useState(false);
   // Hämta cookies relaterade till font
@@ -21,6 +22,8 @@ export default function SettingsButton(props) {
       className="absolute invisible md:visible text-white bg-blue-400 shadow-lg max-w-min right-0 bottom-0 p-4 m-12 rounded-full text-3xl z-30"
       aria-label="Inställningsknapp"
       onClick={onSettingsButtonClick}
+      onKeyDown={(event)=>{runOnEnterPress(event, onSettingsButtonClick)}}
+      tabIndex="0"
     >
       <Icon icon="material-symbols:settings" />
     </div>,

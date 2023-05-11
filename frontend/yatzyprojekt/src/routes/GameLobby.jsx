@@ -21,7 +21,7 @@ export default function GameLobby() {
   let elementToRender = null;
   if (!gameCodeSpecifiedInURL || errorSpecifiedInUrl) {
     elementToRender = (
-      <div className="flex items-center justify-center">
+      <div className="flex items-center justify-center h-screen w-screen">
         <GameCodeInput
           gameCode={gameCode}
           onGameCode={(gameCode) => {

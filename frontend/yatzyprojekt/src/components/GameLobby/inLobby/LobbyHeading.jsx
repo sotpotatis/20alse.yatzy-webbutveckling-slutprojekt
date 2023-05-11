@@ -22,17 +22,23 @@ export default function LobbyHeading({ baseURL, gameCode }) {
     <p>Låt dina kompisar gå med i spelet genom att skicka följande länk:</p>,
     <p
       className="select-all px-3 py-1 rounded-full bg-gray-700 w-auto"
-      onClick={() => {
-        copyTextToClipboard(joinUrl, (textCopied) => {
-          setGameCodeCopiedToClipboard(textCopied);
-        });
-      }}
     >
-      {baseURL.trim("/")}/lobby?gameCode={gameCode}
+      {baseURL.trim("/")}/lobby
     </p>,
+    <p>Ange kod:</p>,
+    <p
+    className="select-all px-3 py-1 text-xl rounded-full bg-gray-700 w-min font-bold"
+    onClick={() => {
+      copyTextToClipboard(gameCode, (textCopied) => {
+        setGameCodeCopiedToClipboard(textCopied);
+      });
+    }}
+  >
+    {gameCode}
+  </p>,
   ];
   useEffect(() => {
-    setInterval(updateNumberOfDots, 750);
+    setTimeout(updateNumberOfDots, 750);
   });
   // Visa ett meddelande om länken för spelet kopierats till klippbordet
   if (gameCodeCopiedToClipboard) {

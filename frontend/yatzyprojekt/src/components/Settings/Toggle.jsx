@@ -1,3 +1,5 @@
+import { runOnEnterPress } from "../../lib/utils";
+
 /* Toggle.jsx
 En "toggle"-liknande inställning.
  */
@@ -11,9 +13,11 @@ export default function Toggle({ onSet, value }) {
       }
       role="button"
       aria-label="Checkbox"
+      tabIndex="0"
       onClick={() => {
         onSet(!value);
       }}
+      onKeyDown={(event)=>{runOnEnterPress(event, onSet(!value))}}
     >
       <p className={`w-12 text-2xl p-0 m-0`}>&#9679;</p>
     </div>

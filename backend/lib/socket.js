@@ -128,7 +128,7 @@ function validatePlayerAuthorization(models, secretKey, callback){
  * @param end Högsta möjliga numret som ska genereras.
  */
 function randomNumber(start,end){
-    return ~~(Math.random() * (end-start+1)) + start// (~~ är snabbare än Math.floor, se https://stackoverflow.com/a/50189413)
+    return ~~(Math.random() * (end-start)) + start// (~~ är snabbare än Math.floor, se https://stackoverflow.com/a/50189413)
 }
 /**
  * Genererar ett roligt spelarnamn.
@@ -159,7 +159,7 @@ function generatePlayerName(models, callback){
         "Förlorare"
     ]
     const randomItemFromArray = (array)=>{ // Definiera en genväg till att ta en slumpmässig sak från en array
-        return array[~~(randomNumber(0, array.length))] // (~~ är snabbare än Math.floor, se https://stackoverflow.com/a/50189413)
+        return array[randomNumber(0, array.length)]
     }
     const playerName = randomItemFromArray(nameBeginnings) + randomItemFromArray(nameEndings) + ~~(Math.random() * (99-10)) + 10
     // Dubbelkolla att spelarnamnet är unikt
@@ -670,7 +670,7 @@ const socketHandlers = {
                 validatePlayerAuthorization(models, socket.handshake.auth.token, ([validAuthentication, player])=>{
                     if (!validAuthentication){
                         console.warn(`Uppkoppling till servern med en tidigare token tilläts inte. Skickar fel...`)
-                        socket.emit("joinGame", generateErrorResponse("Ett fel inträffade vid autentisering till servern. Testa att rensa dina cookies!"))
+                        socket.emit("joinGame", generateErrorResponse("Ett fel inträffade vid autentisering till servern. Detta beror troligtvis på att databasen har ändrats senast du senast spelade. Testa att rensa dina cookies och ladda sedan om sidan!"))
                     }
                     else {
                         console.log("En förautentiserad användare hittades.")
