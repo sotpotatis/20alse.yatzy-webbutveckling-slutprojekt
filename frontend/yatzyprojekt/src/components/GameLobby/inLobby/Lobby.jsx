@@ -12,6 +12,7 @@ import Player from "../../Player/Player";
 import LobbyHeading from "./LobbyHeading";
 import Button from "../../Button";
 import Heading from "../../Heading";
+import WarningBanner from "../../TextBanner.jsx";
 
 /* Lobby.jsx
 Renderar "lobbyn" som är när man väntar på ett spel. */
@@ -203,6 +204,14 @@ export default function Lobby({ gameCode, setGameCode }) {
         </p>
       );
     }
+    startGameElements.push(
+        <p className="text-sm text-white py-3">
+                <b>Notera: </b>
+               Online multiplayer ska vara helt spelbart och fungera, men det finns några enstaka buggar (online multiplayer är oavsett utanför kursen Webbutveckling 1.
+               Om du stöter på en bugg eller ett konstigt meddelande, testa att ladda om sidan. Om felet kvarstår, testa att skapa ett nytt spel. Om detta inte löser ditt problem kan du testa att spela
+               flerspelarläget fast lokalt på din dator istället.
+        </p>
+    )
     return (
       <div key="gameLobby" className="p-3 text-white">
         <LobbyHeading
