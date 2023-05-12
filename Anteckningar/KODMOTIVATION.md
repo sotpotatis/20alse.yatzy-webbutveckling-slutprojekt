@@ -1,2 +1,0 @@
-# Motivering till kod
-

@@ -9,6 +9,16 @@
 
 Detta är git-repositoryt för mitt slutprojekt inom kursen Webbutveckling 1. Det är ett projekt tillsammans med Gränsnittsdesign.
 
+## Snabblänkar
+
+* [Yatzy-hemsida](https://20alse.ssis.nu/yatzy)
+* [Figma-prototyp](https://www.figma.com/file/dFk5T1I52ruJSxF2UfPMDj/Yatzyprojekt?type=design&node-id=0%3A1&t=3XDH59l6Wc28ypRv-1)
+* [All dokumentation](https://git.ssis.nu/20alse/webbutveckling-slutprojekt/-/wikis/home)
+
+## Notera
+
+Några committs i projektet har gjorts av användaren "William04A". Det är mitt [gamla GitHub-konto](https://github.com/William04A). Det är alltså jag, fast på min hemmadator ;)
+
 ## Om projektet
 
 Projektet implementerar ett fungerande yatzyspel som både går att köras lokalt eller online via online multiplayer med två eller flera spelare
