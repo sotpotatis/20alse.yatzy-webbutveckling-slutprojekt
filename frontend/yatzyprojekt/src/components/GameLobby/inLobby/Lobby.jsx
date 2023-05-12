@@ -206,10 +206,10 @@ export default function Lobby({ gameCode, setGameCode }) {
     }
     startGameElements.push(
         <p className="text-sm text-white py-3">
-                <b>Notera: </b>
-               Online multiplayer ska vara helt spelbart och fungera, men det finns några enstaka buggar (online multiplayer är oavsett utanför kursen Webbutveckling 1.
-               Om du stöter på en bugg eller ett konstigt meddelande, testa att ladda om sidan. Om felet kvarstår, testa att skapa ett nytt spel. Om detta inte löser ditt problem kan du testa att spela
-               flerspelarläget fast lokalt på din dator istället.
+              <b>Notera: </b>
+               Online multiplayer ska vara helt spelbart och fungera, men det finns några enstaka buggar (online multiplayer är oavsett utanför kursen Webbutveckling 1).
+               Om du stöter på en bugg eller får ett konstigt meddelande, testa att ladda om sidan. Detta löser oftast problemet. Om felet kvarstår, testa att skapa ett nytt onlinespel. Om detta inte löser ditt problem kan du testa att spela
+               flerspelarläget fast lokalt på din dator istället (klicka <a className="underline hover:cursor-pointer" onClick={()=>{navigate("/game")}}>här</a> för att komma till det).
         </p>
     )
     return (
