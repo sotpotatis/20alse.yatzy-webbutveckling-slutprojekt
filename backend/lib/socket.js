@@ -143,7 +143,7 @@ function validatePlayerAuthorization(models, secretKey, callback) {
  * @param end Högsta möjliga numret som ska genereras.
  */
 function randomNumber(start, end) {
-  return ~~(Math.random() * (end - start)) + start; // (~~ är snabbare än Math.floor, se https://stackoverflow.com/a/50189413)
+  return Math.floor(Math.random() * (end - start + 1) + start)
 }
 /**
  * Genererar ett roligt spelarnamn.
@@ -175,7 +175,7 @@ function generatePlayerName(models, callback) {
   ];
   const randomItemFromArray = (array) => {
     // Definiera en genväg till att ta en slumpmässig sak från en array
-    return array[randomNumber(0, array.length)];
+    return array[randomNumber(0, array.length-1)];
   };
   const playerName =
     randomItemFromArray(nameBeginnings) +
@@ -981,7 +981,7 @@ const socketHandlers = {
                       socket.emit(
                         "joinGame",
                         generateErrorResponse(
-                          "Timeout vid autentisering när dina tidigare poäng skulle rensas. Vänligen försök att gå med i spelet lite senare."
+                          "Timeout vid autentisering när dina tidigare poäng skulle rensas. Detta problem löses nästan alltid av att ladda om sidan. Annars, testa att gå med lite senare!"
                         )
                       );
                       clearInterval(scoreRemoveCheckInterval);
