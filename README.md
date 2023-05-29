@@ -1,3 +1,8 @@
+> **Note**: This is part of my *20alse backup* series, which backs up websites I have on my personal school website after it shuts down because I am graduating.
+
+> **Note:** Translating this page to English is a work in progress!
+
+# Original README
 # Webbutveckling-slutprojekt: Albins yatzyprojekt!
 ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
 ![React Router](https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=react-router&logoColor=white)
