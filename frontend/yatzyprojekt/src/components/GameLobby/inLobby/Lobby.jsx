@@ -113,7 +113,7 @@ export default function Lobby({ gameCode, setGameCode }) {
               saveAuthentication(response.player.secret); // Spara användarens nyckel så vi kan återansluta
               if (!oldAuthFound) {
                 // Workaround för att koden ska fungera korrekt, kan göras lite snyggare även om det bara händer första gången man spelar (TODO)
-                navigate(window.location.href);
+                location.reload();
               }
             } else {
               console.warn(
