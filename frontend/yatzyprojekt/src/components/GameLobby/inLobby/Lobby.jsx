@@ -112,7 +112,8 @@ export default function Lobby({ gameCode, setGameCode }) {
               const oldAuthFound = getSavedAuthentication() !== null;
               saveAuthentication(response.player.secret); // Spara användarens nyckel så vi kan återansluta
               if (!oldAuthFound) {
-                location.reload();
+                // Workaround för att koden ska fungera korrekt, kan göras lite snyggare även om det bara händer första gången man spelar (TODO)
+                navigate(window.location.href);
               }
             } else {
               console.warn(
@@ -215,7 +216,7 @@ export default function Lobby({ gameCode, setGameCode }) {
     return (
       <div key="gameLobby" className="p-3 text-white">
         <LobbyHeading
-          baseURL="https://20alse.ssis.nu/yatzy"
+          baseURL="https://20alse.albins.website/yatzy"
           gameCode={gameCode}
         />
         <Heading size={2}>Anslutna spelare</Heading>
